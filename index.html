@@ -1,54 +1,592 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DropVerse</title>
 
-    <title>TaskDrop</title>
+<style>
+* {
+    box-sizing: border-box;
+}
 
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            background: #f2f5f9;
-            padding: 30px;
-        }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0b1020;
+    color: white;
+}
 
-        .box {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            max-width: 400px;
-            margin: auto;
-        }
+.container {
+    max-width: 480px;
+    margin: auto;
+    min-height: 100vh;
+    padding: 20px;
+    padding-bottom: 90px;
+}
 
-        button {
-            width: 100%;
-            padding: 14px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-        }
-    </style>
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    font-size: 45px;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.subtitle {
+    color: #9da6bd;
+    font-size: 14px;
+}
+
+.balance {
+    background: #151c32;
+    border-radius: 20px;
+    padding: 22px;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.balance-label {
+    color: #9da6bd;
+    font-size: 14px;
+}
+
+.balance-number {
+    font-size: 38px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.coin {
+    margin: 25px auto;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #ffd84d, #f0a900);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 75px;
+    box-shadow: 0 10px 40px rgba(255, 193, 7, 0.3);
+    user-select: none;
+    cursor: pointer;
+    transition: transform 0.08s;
+}
+
+.coin:active {
+    transform: scale(0.94);
+}
+
+.energy-box {
+    text-align: center;
+    color: #cbd2e5;
+    margin-bottom: 20px;
+}
+
+.progress {
+    height: 9px;
+    background: #252d44;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 100%;
+    background: #ffd34e;
+}
+
+.section {
+    background: #151c32;
+    padding: 18px;
+    border-radius: 18px;
+    margin-top: 15px;
+}
+
+.section h2 {
+    margin-top: 0;
+}
+
+.task {
+    background: #202941;
+    padding: 14px;
+    border-radius: 13px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task button,
+.action-button {
+    border: 0;
+    background: #ffd34e;
+    color: #111;
+    padding: 9px 14px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.referral {
+    text-align: center;
+}
+
+.referral-code {
+    background: #0d1426;
+    padding: 14px;
+    border-radius: 12px;
+    margin: 12px 0;
+    word-break: break-all;
+    color: #ffd34e;
+}
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 480px;
+    margin: auto;
+    background: #12192c;
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 5px;
+    border-top: 1px solid #28314a;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: #aab3c9;
+    font-size: 12px;
+}
+
+.nav-btn.active {
+    color: #ffd34e;
+}
+
+.hidden {
+    display: none;
+}
+
+.message {
+    text-align: center;
+    color: #ffd34e;
+    margin-top: 10px;
+    min-height: 20px;
+}
+</style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="container">
 
-    <h1>🚀 TaskDrop</h1>
+    <div class="header">
+        <div class="logo">🚀</div>
+        <div class="title">DropVerse</div>
+        <div class="subtitle">Complete Tasks. Earn Points. Get Rewards.</div>
+    </div>
 
-    <p>Complete Tasks. Earn Points. Get Rewards.</p>
+    <!-- HOME -->
+    <div id="home">
 
-    <h2>🪙 0 TDP</h2>
+        <div class="balance">
+            <div class="balance-label">Your DVP Balance</div>
+            <div class="balance-number">
+                🪙 <span id="points">0</span>
+            </div>
+        </div>
 
-    <button>🎯 Tasks</button>
-    <button>👥 Refer Friends</button>
-    <button>🏆 Leaderboard</button>
-    <button>💰 Rewards</button>
+        <div
+            class="coin"
+            id="coin"
+            onclick="tapCoin()"
+        >
+            🪙
+        </div>
+
+        <div class="energy-box">
+            ⚡ Energy: <span id="energy">100</span>/100
+
+            <div class="progress">
+                <div
+                    class="progress-bar"
+                    id="energyBar"
+                ></div>
+            </div>
+        </div>
+
+        <div class="message" id="message"></div>
+
+    </div>
+
+
+    <!-- TASKS -->
+    <div id="tasks" class="section hidden">
+
+        <h2>🎯 Tasks</h2>
+
+        <div class="task">
+            <span>📢 Join Telegram</span>
+            <button onclick="completeTask('telegram')">
+                +100
+            </button>
+        </div>
+
+        <div class="task">
+            <span>📣 Follow Channel</span>
+            <button onclick="completeTask('channel')">
+                +150
+            </button>
+        </div>
+
+        <div class="task">
+            <span>🎮 Daily Check-in</span>
+            <button onclick="completeTask('daily')">
+                +50
+            </button>
+        </div>
+
+        <div class="task">
+            <span>🧠 Complete Quiz</span>
+            <button onclick="completeTask('quiz')">
+                +200
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- REFERRAL -->
+    <div id="referral" class="section hidden referral">
+
+        <h2>👥 Invite Friends</h2>
+
+        <p>
+            Invite friends and earn referral points.
+        </p>
+
+        <div class="referral-code" id="referralCode">
+            Loading...
+        </div>
+
+        <button
+            class="action-button"
+            onclick="copyReferral()"
+        >
+            📋 Copy Referral Link
+        </button>
+
+        <h3>
+            Referrals:
+            <span id="referrals">0</span>
+        </h3>
+
+    </div>
+
+
+    <!-- LEADERBOARD -->
+    <div id="leaderboard" class="section hidden">
+
+        <h2>🏆 Leaderboard</h2>
+
+        <div class="task">
+            🥇 Player 1
+            <strong>25,400 DVP</strong>
+        </div>
+
+        <div class="task">
+            🥈 Player 2
+            <strong>19,800 DVP</strong>
+        </div>
+
+        <div class="task">
+            🥉 Player 3
+            <strong>15,250 DVP</strong>
+        </div>
+
+        <div class="task">
+            👤 You
+            <strong id="leaderPoints">0 DVP</strong>
+        </div>
+
+    </div>
+
+
+    <!-- REWARDS -->
+    <div id="rewards" class="section hidden">
+
+        <h2>💰 Rewards</h2>
+
+        <p>
+            Your current balance:
+        </p>
+
+        <h1>
+            🪙 <span id="rewardPoints">0</span> DVP
+        </h1>
+
+        <p style="color:#9da6bd;">
+            Rewards will depend on the final campaign
+            reward pool and eligibility rules.
+        </p>
+
+        <button
+            class="action-button"
+            onclick="showMessage('Withdrawal will be available after the campaign rules are finalized.')"
+        >
+            💰 Withdrawal
+        </button>
+
+    </div>
 
 </div>
+
+
+<!-- BOTTOM NAV -->
+
+<div class="bottom-nav">
+
+    <button class="nav-btn active"
+        onclick="showPage('home', this)">
+        🏠<br>Home
+    </button>
+
+    <button class="nav-btn"
+        onclick="showPage('tasks', this)">
+        🎯<br>Tasks
+    </button>
+
+    <button class="nav-btn"
+        onclick="showPage('referral', this)">
+        👥<br>Refer
+    </button>
+
+    <button class="nav-btn"
+        onclick="showPage('leaderboard', this)">
+        🏆<br>Rank
+    </button>
+
+    <button class="nav-btn"
+        onclick="showPage('rewards', this)">
+        💰<br>Rewards
+    </button>
+
+</div>
+
+
+<script>
+
+let points =
+    Number(localStorage.getItem("dropverse_points")) || 0;
+
+let energy =
+    Number(localStorage.getItem("dropverse_energy")) || 100;
+
+let referrals =
+    Number(localStorage.getItem("dropverse_referrals")) || 0;
+
+let completedTasks =
+    JSON.parse(
+        localStorage.getItem("dropverse_tasks") || "{}"
+    );
+
+
+function updateUI() {
+
+    document.getElementById("points").innerText =
+        points.toLocaleString();
+
+    document.getElementById("energy").innerText =
+        energy;
+
+    document.getElementById("energyBar").style.width =
+        energy + "%";
+
+    document.getElementById("referrals").innerText =
+        referrals;
+
+    document.getElementById("rewardPoints").innerText =
+        points.toLocaleString();
+
+    document.getElementById("leaderPoints").innerText =
+        points.toLocaleString() + " DVP";
+
+    localStorage.setItem(
+        "dropverse_points",
+        points
+    );
+
+    localStorage.setItem(
+        "dropverse_energy",
+        energy
+    );
+
+    localStorage.setItem(
+        "dropverse_referrals",
+        referrals
+    );
+
+    localStorage.setItem(
+        "dropverse_tasks",
+        JSON.stringify(completedTasks)
+    );
+}
+
+
+function tapCoin() {
+
+    if (energy <= 0) {
+
+        showMessage("⚡ Energy finished. Try again later.");
+
+        return;
+    }
+
+    points += 1;
+    energy -= 1;
+
+    updateUI();
+
+    showMessage("+1 DVP 🪙");
+}
+
+
+function completeTask(task) {
+
+    if (completedTasks[task]) {
+
+        showMessage("Already completed!");
+
+        return;
+    }
+
+    let reward = 0;
+
+    if (task === "telegram") reward = 100;
+    if (task === "channel") reward = 150;
+    if (task === "daily") reward = 50;
+    if (task === "quiz") reward = 200;
+
+    points += reward;
+
+    completedTasks[task] = true;
+
+    updateUI();
+
+    showMessage("Task completed! +" + reward + " DVP");
+}
+
+
+function showPage(page, button) {
+
+    let pages = [
+        "home",
+        "tasks",
+        "referral",
+        "leaderboard",
+        "rewards"
+    ];
+
+    pages.forEach(function(p) {
+
+        document.getElementById(p)
+            .classList.add("hidden");
+
+    });
+
+    document.getElementById(page)
+        .classList.remove("hidden");
+
+
+    document.querySelectorAll(".nav-btn")
+        .forEach(function(btn) {
+
+            btn.classList.remove("active");
+
+        });
+
+    button.classList.add("active");
+}
+
+
+function showMessage(text) {
+
+    let msg =
+        document.getElementById("message");
+
+    msg.innerText = text;
+
+    setTimeout(function() {
+
+        msg.innerText = "";
+
+    }, 2000);
+}
+
+
+function copyReferral() {
+
+    let link =
+        document.getElementById("referralCode")
+            .innerText;
+
+    navigator.clipboard.writeText(link);
+
+    showMessage("Referral link copied!");
+}
+
+
+/* Demo referral link */
+
+let userID =
+    localStorage.getItem("dropverse_user_id");
+
+if (!userID) {
+
+    userID =
+        Math.floor(
+            100000 +
+            Math.random() * 900000
+        );
+
+    localStorage.setItem(
+        "dropverse_user_id",
+        userID
+    );
+}
+
+document.getElementById("referralCode")
+    .innerText =
+    "https://t.me/YourBot?start=" + userID;
+
+
+/* Energy regeneration */
+
+setInterval(function() {
+
+    if (energy < 100) {
+
+        energy++;
+
+        updateUI();
+
+    }
+
+}, 5000);
+
+
+updateUI();
+
+</script>
 
 </body>
 </html>
