@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <title>DropVerse</title>
 
 <style>
@@ -383,7 +384,18 @@ body {
 </div>
 
 
-<script>
+<script>const tg = window.Telegram.WebApp;
+
+tg.ready();
+tg.expand();
+
+const telegramUser = tg.initDataUnsafe.user;
+
+if (telegramUser) {
+    console.log("Telegram User ID:", telegramUser.id);
+    console.log("Telegram Name:", telegramUser.first_name);
+    console.log("Telegram Username:", telegramUser.username);
+}
 
 let points =
     Number(localStorage.getItem("dropverse_points")) || 0;
