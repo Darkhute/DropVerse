@@ -6,7 +6,81 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <title>DropVerse</title>
 
-<style>
+<style>/* Top Player ID */
+.player-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background: #151c32;
+    padding: 12px 14px;
+    border-radius: 12px;
+}
+
+.player-id {
+    font-size: 12px;
+    color: #ffd34e;
+    overflow-wrap: anywhere;
+}
+
+/* Energy Line */
+.energy-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.energy-track {
+    flex: 1;
+    height: 12px;
+    background: #29314a;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.energy-fill {
+    height: 100%;
+    width: 100%;
+    background: #ffd34e;
+    transition: width 0.3s;
+}
+
+.energy-time {
+    min-width: 70px;
+    font-size: 12px;
+    color: #ffd34e;
+    text-align: right;
+}
+
+/* Daily Reward Cards */
+.daily-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.daily-card {
+    background: #202941;
+    padding: 14px 5px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.daily-card strong {
+    display: block;
+    margin: 8px 0;
+    color: #ffd34e;
+}
+
+.daily-card button {
+    width: 100%;
+    padding: 8px 2px;
+    font-size: 11px;
+}
+
+.daily-card.claimed {
+    opacity: 0.55;
+}
 *{box-sizing:border-box}
 body{
  margin:0;background:#0b1020;color:white;
