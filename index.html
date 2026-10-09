@@ -670,8 +670,9 @@ async function completeDaily() {
     try {
 
         const data = await api("claim_task", {
-            taskId: "daily"
-        });
+    task_id: "daily",
+    reward: 50
+});
 
         renderProfile(data.profile);
 
