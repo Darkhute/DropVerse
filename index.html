@@ -589,9 +589,7 @@ async function sendTap(count) {
 
     try {
 
-        const data = await api("tap", {
-            count: count
-        });
+        const data = await api("tap");
 
         renderProfile(data.profile);
 
