@@ -22,8 +22,7 @@ body {
     max-width: 480px;
     margin: auto;
     min-height: 100vh;
-    padding: 20px;
-    padding-bottom: 90px;
+    padding: 20px 20px 90px;
 }
 
 .header {
@@ -76,6 +75,8 @@ body {
     font-size: 75px;
     box-shadow: 0 10px 40px rgba(255, 193, 7, 0.3);
     user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
     cursor: pointer;
     transition: transform 0.08s;
 }
@@ -100,7 +101,7 @@ body {
 
 .progress-bar {
     height: 100%;
-    width: 100%;
+    width: 0%;
     background: #ffd34e;
 }
 
@@ -123,6 +124,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
 }
 
 .task button,
@@ -181,7 +183,15 @@ body {
     text-align: center;
     color: #ffd34e;
     margin-top: 10px;
-    min-height: 20px;
+    min-height: 24px;
+    overflow-wrap: anywhere;
+}
+
+.note {
+    text-align: center;
+    color: #9da6bd;
+    font-size: 12px;
+    line-height: 1.5;
 }
 </style>
 </head>
@@ -193,10 +203,13 @@ body {
     <div class="header">
         <div class="logo">🚀</div>
         <div class="title">DropVerse</div>
-        <div class="subtitle">Complete Tasks. Earn Points. Get Rewards.</div>
+        <div class="subtitle">
+            Complete Tasks. Earn Points. Get Rewards.
+        </div>
     </div>
 
     <!-- HOME -->
+
     <div id="home">
 
         <div class="balance">
@@ -206,144 +219,119 @@ body {
             </div>
         </div>
 
-        <div
-            class="coin"
-            id="coin"
-            onclick="tapCoin()"
-        >
+        <div class="coin" id="coin">
             🪙
         </div>
 
         <div class="energy-box">
-            ⚡ Energy: <span id="energy">100</span>/100
+            ⚡ Energy:
+            <span id="energy">0</span>/<span id="maxEnergy">0</span>
 
             <div class="progress">
-                <div
-                    class="progress-bar"
-                    id="energyBar"
-                ></div>
+                <div class="progress-bar" id="energyBar"></div>
             </div>
         </div>
 
-        <div class="message" id="message"></div>
+        <div class="message" id="message">
+            Connecting to DropVerse...
+        </div>
+
+        <p class="note">
+            Auto Coin is disabled.
+            Tap the coin to earn DVP.
+        </p>
 
     </div>
 
-
     <!-- TASKS -->
+
     <div id="tasks" class="section hidden">
 
         <h2>🎯 Tasks</h2>
 
         <div class="task">
             <span>📢 Join Telegram</span>
-            <button onclick="completeTask('telegram')">
-                +100
-            </button>
+            <button onclick="unsupportedTask()">+100</button>
         </div>
 
         <div class="task">
             <span>📣 Follow Channel</span>
-            <button onclick="completeTask('channel')">
-                +150
-            </button>
+            <button onclick="unsupportedTask()">+150</button>
         </div>
 
         <div class="task">
             <span>🎮 Daily Check-in</span>
-            <button onclick="completeTask('daily')">
-                +50
-            </button>
+            <button onclick="completeDaily()">+50</button>
         </div>
 
         <div class="task">
             <span>🧠 Complete Quiz</span>
-            <button onclick="completeTask('quiz')">
-                +200
-            </button>
+            <button onclick="unsupportedTask()">+200</button>
         </div>
+
+        <p class="note">
+            Daily Check-in is connected to the server.
+            Other tasks are not connected yet.
+        </p>
 
     </div>
 
-
     <!-- REFERRAL -->
+
     <div id="referral" class="section hidden referral">
 
         <h2>👥 Invite Friends</h2>
 
-        <p>
-            Invite friends and earn referral points.
-        </p>
+        <p>Invite friends and earn referral points.</p>
 
         <div class="referral-code" id="referralCode">
-            Loading...
+            Referral link not configured
         </div>
 
-        <button
-            class="action-button"
-            onclick="copyReferral()"
-        >
+        <button class="action-button" onclick="copyReferral()">
             📋 Copy Referral Link
         </button>
 
         <h3>
-            Referrals:
-            <span id="referrals">0</span>
+            Referrals: <span id="referrals">0</span>
         </h3>
+
+        <p class="note">
+            Referral rewards need additional setup.
+        </p>
 
     </div>
 
-
     <!-- LEADERBOARD -->
+
     <div id="leaderboard" class="section hidden">
 
         <h2>🏆 Leaderboard</h2>
 
-        <div class="task">
-            🥇 Player 1
-            <strong>25,400 DVP</strong>
-        </div>
-
-        <div class="task">
-            🥈 Player 2
-            <strong>19,800 DVP</strong>
-        </div>
-
-        <div class="task">
-            🥉 Player 3
-            <strong>15,250 DVP</strong>
-        </div>
-
-        <div class="task">
-            👤 You
-            <strong id="leaderPoints">0 DVP</strong>
+        <div id="leaderboardRows">
+            Loading leaderboard...
         </div>
 
     </div>
 
-
     <!-- REWARDS -->
+
     <div id="rewards" class="section hidden">
 
         <h2>💰 Rewards</h2>
 
-        <p>
-            Your current balance:
-        </p>
+        <p>Your current balance:</p>
 
         <h1>
             🪙 <span id="rewardPoints">0</span> DVP
         </h1>
 
-        <p style="color:#9da6bd;">
-            Rewards will depend on the final campaign
-            reward pool and eligibility rules.
+        <p class="note">
+            Rewards depend on the final campaign rules.
         </p>
 
-        <button
-            class="action-button"
-            onclick="showMessage('Withdrawal will be available after the campaign rules are finalized.')"
-        >
+        <button class="action-button"
+            onclick="showMessage('Withdrawal is not available yet.')">
             💰 Withdrawal
         </button>
 
@@ -351,8 +339,7 @@ body {
 
 </div>
 
-
-<!-- BOTTOM NAV -->
+<!-- BOTTOM NAVIGATION -->
 
 <div class="bottom-nav">
 
@@ -383,124 +370,47 @@ body {
 
 </div>
 
+<script>
 
-<script>const tg = window.Telegram.WebApp;
+const tg = window.Telegram.WebApp;
 
 tg.ready();
 tg.expand();
 
-const telegramUser = tg.initDataUnsafe.user;
+/*
+IMPORTANT:
+Replace the URL below with your real
+Supabase dropverse-game Edge Function URL.
+*/
 
-if (telegramUser) {
-    console.log("Telegram User ID:", telegramUser.id);
-    console.log("Telegram Name:", telegramUser.first_name);
-    console.log("Telegram Username:", telegramUser.username);
+const API_URL =
+"https://YOUR_PROJECT_REF.supabase.co/functions/v1/dropverse-game";
+
+let profile = null;
+let busy = false;
+let pendingTaps = 0;
+let tapTimer = null;
+
+/* SHOW MESSAGE */
+
+function showMessage(text) {
+
+    const message = document.getElementById("message");
+
+    message.innerText = text;
+
+    clearTimeout(showMessage.timer);
+
+    showMessage.timer = setTimeout(function() {
+        message.innerText = "";
+    }, 2500);
 }
 
-let points =
-    Number(localStorage.getItem("dropverse_points")) || 0;
-
-let energy =
-    Number(localStorage.getItem("dropverse_energy")) || 100;
-
-let referrals =
-    Number(localStorage.getItem("dropverse_referrals")) || 0;
-
-let completedTasks =
-    JSON.parse(
-        localStorage.getItem("dropverse_tasks") || "{}"
-    );
-
-
-function updateUI() {
-
-    document.getElementById("points").innerText =
-        points.toLocaleString();
-
-    document.getElementById("energy").innerText =
-        energy;
-
-    document.getElementById("energyBar").style.width =
-        energy + "%";
-
-    document.getElementById("referrals").innerText =
-        referrals;
-
-    document.getElementById("rewardPoints").innerText =
-        points.toLocaleString();
-
-    document.getElementById("leaderPoints").innerText =
-        points.toLocaleString() + " DVP";
-
-    localStorage.setItem(
-        "dropverse_points",
-        points
-    );
-
-    localStorage.setItem(
-        "dropverse_energy",
-        energy
-    );
-
-    localStorage.setItem(
-        "dropverse_referrals",
-        referrals
-    );
-
-    localStorage.setItem(
-        "dropverse_tasks",
-        JSON.stringify(completedTasks)
-    );
-}
-
-
-function tapCoin() {
-
-    if (energy <= 0) {
-
-        showMessage("⚡ Energy finished. Try again later.");
-
-        return;
-    }
-
-    points += 1;
-    energy -= 1;
-
-    updateUI();
-
-    showMessage("+1 DVP 🪙");
-}
-
-
-function completeTask(task) {
-
-    if (completedTasks[task]) {
-
-        showMessage("Already completed!");
-
-        return;
-    }
-
-    let reward = 0;
-
-    if (task === "telegram") reward = 100;
-    if (task === "channel") reward = 150;
-    if (task === "daily") reward = 50;
-    if (task === "quiz") reward = 200;
-
-    points += reward;
-
-    completedTasks[task] = true;
-
-    updateUI();
-
-    showMessage("Task completed! +" + reward + " DVP");
-}
-
+/* NAVIGATION */
 
 function showPage(page, button) {
 
-    let pages = [
+    const pages = [
         "home",
         "tasks",
         "referral",
@@ -508,95 +418,304 @@ function showPage(page, button) {
         "rewards"
     ];
 
-    pages.forEach(function(p) {
-
-        document.getElementById(p)
-            .classList.add("hidden");
-
+    pages.forEach(function(name) {
+        document.getElementById(name)
+            .classList.toggle("hidden", name !== page);
     });
 
-    document.getElementById(page)
-        .classList.remove("hidden");
-
-
-    document.querySelectorAll(".nav-btn")
-        .forEach(function(btn) {
-
-            btn.classList.remove("active");
-
-        });
+    document.querySelectorAll(".nav-btn").forEach(function(btn) {
+        btn.classList.remove("active");
+    });
 
     button.classList.add("active");
 }
 
+/* UPDATE SCREEN FROM SERVER */
 
-function showMessage(text) {
+function renderProfile(p) {
 
-    let msg =
-        document.getElementById("message");
+    if (!p) return;
 
-    msg.innerText = text;
+    profile = p;
 
-    setTimeout(function() {
+    const points = Number(p.dvp_points || 0);
+    const energy = Number(p.energy || 0);
+    const maxEnergy = Number(p.max_energy || 0);
 
-        msg.innerText = "";
+    document.getElementById("points").innerText =
+        points.toLocaleString();
 
-    }, 2000);
+    document.getElementById("energy").innerText =
+        energy.toLocaleString();
+
+    document.getElementById("maxEnergy").innerText =
+        maxEnergy.toLocaleString();
+
+    document.getElementById("energyBar").style.width =
+        (maxEnergy > 0
+            ? Math.min(100, energy / maxEnergy * 100)
+            : 0) + "%";
+
+    document.getElementById("referrals").innerText =
+        Number(p.referrals || 0);
+
+    document.getElementById("rewardPoints").innerText =
+        points.toLocaleString();
 }
 
+/* SERVER CONNECTION */
 
-function copyReferral() {
+async function api(action, extra = {}) {
 
-    let link =
-        document.getElementById("referralCode")
-            .innerText;
-
-    navigator.clipboard.writeText(link);
-
-    showMessage("Referral link copied!");
-}
-
-
-/* Demo referral link */
-
-let userID =
-    localStorage.getItem("dropverse_user_id");
-
-if (!userID) {
-
-    userID =
-        Math.floor(
-            100000 +
-            Math.random() * 900000
+    if (!tg.initData) {
+        throw new Error(
+            "Please open DropVerse from your Telegram bot."
         );
-
-    localStorage.setItem(
-        "dropverse_user_id",
-        userID
-    );
-}
-
-document.getElementById("referralCode")
-    .innerText =
-    "https://t.me/YourBot?start=" + userID;
-
-
-/* Energy regeneration */
-
-setInterval(function() {
-
-    if (energy < 100) {
-
-        energy++;
-
-        updateUI();
-
     }
 
-}, 5000);
+    if (API_URL.includes("YOUR_PROJECT_REF")) {
+        throw new Error(
+            "Supabase URL has not been configured."
+        );
+    }
 
+    const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            initData: tg.initData,
+            action: action,
+            ...extra
+        })
+    });
 
-updateUI();
+    const data = await response.json().catch(function() {
+        return {};
+    });
+
+    if (!response.ok) {
+        throw new Error(
+            data.error || "Server request failed."
+        );
+    }
+
+    return data;
+}
+
+/* LOAD PLAYER */
+
+async function loadGame() {
+
+    try {
+
+        const data = await api("init");
+
+        renderProfile(data.profile);
+
+        renderLeaderboard(data.leaderboard || []);
+
+        showMessage("Connected to DropVerse!");
+
+    } catch (error) {
+
+        showMessage(error.message || "Connection failed.");
+
+    }
+}
+
+/* LEADERBOARD */
+
+function renderLeaderboard(rows) {
+
+    const box = document.getElementById("leaderboardRows");
+
+    box.innerHTML = "";
+
+    if (!rows.length) {
+        box.innerText = "No players on leaderboard yet.";
+        return;
+    }
+
+    rows.forEach(function(player, index) {
+
+        const row = document.createElement("div");
+
+        row.className = "task";
+
+        const name = player.username
+            ? "@" + player.username
+            : (player.first_name || "Player");
+
+        const left = document.createElement("span");
+
+        left.innerText = (index + 1) + ". " + name;
+
+        const right = document.createElement("strong");
+
+        right.innerText =
+            Number(player.dvp_points || 0).toLocaleString()
+            + " DVP";
+
+        row.appendChild(left);
+        row.appendChild(right);
+
+        box.appendChild(row);
+
+    });
+}
+
+/* TAP COIN */
+
+async function sendTap(count) {
+
+    if (busy) {
+        pendingTaps = Math.min(5, pendingTaps + count);
+        return;
+    }
+
+    if (!profile) {
+        showMessage("Game is not connected yet.");
+        return;
+    }
+
+    if (Number(profile.energy) < count) {
+        showMessage("⚡ Not enough Energy. Please wait.");
+        return;
+    }
+
+    busy = true;
+
+    try {
+
+        const data = await api("tap", {
+            count: count
+        });
+
+        renderProfile(data.profile);
+
+        showMessage(
+            "+" + Number(data.earned || count) + " DVP 🪙"
+        );
+
+    } catch (error) {
+
+        showMessage(error.message || "Tap failed.");
+
+        try {
+            const data = await api("state");
+            renderProfile(data.profile);
+        } catch (_) {}
+
+    } finally {
+
+        busy = false;
+
+        if (pendingTaps > 0) {
+
+            const nextCount = Math.min(5, pendingTaps);
+
+            pendingTaps = 0;
+
+            sendTap(nextCount);
+
+        }
+
+    }
+}
+
+/*
+Collect simultaneous taps for a short time.
+Maximum five taps are sent in one request.
+*/
+
+function queueTap() {
+
+    pendingTaps = Math.min(5, pendingTaps + 1);
+
+    clearTimeout(tapTimer);
+
+    tapTimer = setTimeout(function() {
+
+        const count = pendingTaps;
+
+        pendingTaps = 0;
+
+        if (count > 0) {
+            sendTap(count);
+        }
+
+    }, 70);
+}
+
+const coin = document.getElementById("coin");
+
+coin.addEventListener("pointerdown", function(event) {
+
+    event.preventDefault();
+
+    queueTap();
+
+});
+
+coin.addEventListener("contextmenu", function(event) {
+    event.preventDefault();
+});
+
+/* DAILY CHECK-IN */
+
+async function completeDaily() {
+
+    try {
+
+        const data = await api("claim_task", {
+            taskId: "daily"
+        });
+
+        renderProfile(data.profile);
+
+        showMessage("Daily Check-in claimed! +50 DVP");
+
+    } catch (error) {
+
+        showMessage(error.message || "Could not claim task.");
+
+    }
+}
+
+/* OTHER TASKS NOT CONNECTED YET */
+
+function unsupportedTask() {
+
+    showMessage(
+        "This task is not connected to the server yet."
+    );
+
+}
+
+/* COPY REFERRAL */
+
+async function copyReferral() {
+
+    const link = document.getElementById("referralCode").innerText;
+
+    try {
+
+        await navigator.clipboard.writeText(link);
+
+        showMessage("Referral link copied!");
+
+    } catch (error) {
+
+        showMessage("Please copy the link manually.");
+
+    }
+}
+
+/* START */
+
+loadGame();
 
 </script>
 
