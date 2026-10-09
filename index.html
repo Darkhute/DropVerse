@@ -715,7 +715,12 @@ async function copyReferral() {
 
 /* START */
 
-loadGame();
+showMessage(“Connecting to server…”);
+
+loadGame().catch(function(error) {
+showMessage(“Error: “ + error.message);
+console.error(“DropVerse Error:”, error);
+});
 
 </script>
 
