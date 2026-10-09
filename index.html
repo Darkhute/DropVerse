@@ -506,7 +506,28 @@ async function api(action, extra = {}) {
 
 /* LOAD PLAYER */
 
-async function loadGame() {
+async function loadGame(async function loadGame() {
+    const message = document.getElementById("message");
+
+    try {
+        message.innerText = "Connecting to server...";
+
+        const data = await api("init");
+
+        if (!data.ok || !data.profile) {
+            throw new Error(data.error || "Player profile not received.");
+        }
+
+        renderProfile(data.profile);
+        renderLeaderboard(data.leaderboard || []);
+
+        message.innerText = "Connected to DropVerse!";
+
+    } catch (error) {
+        console.error("DropVerse connection error:", error);
+        message.innerText = "Error: " + error.message;
+    }
+}) {
 
     try {
 
