@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>DropVerse - Tap to Earn</title>
+  <title>DropVerse - Tap & Earn</title>
   
   <!-- Telegram WebApp SDK Script -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -23,73 +23,77 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
       height: 100vh;
-      padding: 20px 10px;
       overflow: hidden;
+    }
+
+    /* Content Area */
+    .tab-content {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px;
+      overflow-y: auto;
+    }
+
+    .tab-content.active {
+      display: flex;
     }
 
     /* Header & Balance */
     .header {
       text-align: center;
-      margin-top: 10px;
+      margin-top: 5px;
+      margin-bottom: 10px;
     }
 
     .title {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: bold;
       color: #f3ba2f;
-      margin-bottom: 5px;
-    }
-
-    .subtitle {
-      font-size: 13px;
-      color: #888888;
-      margin-bottom: 10px;
     }
 
     .balance-container {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 8px;
+      margin-top: 5px;
     }
 
     .balance {
-      font-size: 38px;
+      font-size: 36px;
       font-weight: 800;
-      color: #ffffff;
     }
 
     .coin-tag {
-      font-size: 18px;
+      font-size: 16px;
       color: #f3ba2f;
       font-weight: bold;
     }
 
-    /* Tap Area (Notcoin Style) */
+    /* Tap Coin Button */
     .coin-container {
       position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 20px 0;
+      margin: auto 0;
     }
 
     .coin-btn {
-      width: 230px;
-      height: 230px;
+      width: 210px;
+      height: 210px;
       border-radius: 50%;
       background: radial-gradient(circle, #fcd535 0%, #f3ba2f 70%, #d99b00 100%);
-      box-shadow: 0 0 30px rgba(243, 186, 47, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.6);
+      box-shadow: 0 0 25px rgba(243, 186, 47, 0.4);
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
-      transition: transform 0.08s ease-in-out;
-      border: 8px solid #ffea79;
+      transition: transform 0.08s ease;
+      border: 6px solid #ffea79;
     }
 
     .coin-btn:active {
@@ -97,255 +101,187 @@
     }
 
     .coin-inner {
-      width: 170px;
-      height: 170px;
-      border-radius: 50%;
-      background: #f3ba2f;
-      border: 4px dashed #b88100;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 65px;
+      font-size: 60px;
     }
 
-    /* Floating +1 Text Animation */
     .tap-pop {
       position: absolute;
-      font-size: 28px;
+      font-size: 26px;
       font-weight: bold;
       color: #ffffff;
       pointer-events: none;
       animation: floatUp 0.8s ease-out forwards;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.5);
     }
 
     @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(-80px) scale(1.3); }
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-70px); }
     }
 
     /* Energy Bar */
     .energy-container {
-      width: 90%;
-      max-width: 350px;
+      width: 100%;
+      max-width: 320px;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     .energy-info {
       display: flex;
       justify-content: space-between;
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #cccccc;
+      font-size: 14px;
+      margin-bottom: 5px;
+      color: #ccc;
     }
 
     .progress-bar {
       width: 100%;
-      height: 14px;
-      background-color: #1e2329;
-      border-radius: 10px;
+      height: 12px;
+      background: #1e2329;
+      border-radius: 8px;
       overflow: hidden;
-      border: 1px solid #333;
     }
 
     .progress-fill {
       height: 100%;
       width: 100%;
       background: linear-gradient(90deg, #f3ba2f, #ffea79);
-      transition: width 0.1s linear;
-      border-radius: 10px;
     }
 
-    /* Status Message */
-    .status-msg {
+    /* Task & Leaderboard UI Cards */
+    .card-list {
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .card-item {
+      background: #181d27;
+      padding: 12px 15px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #2b313a;
+    }
+
+    .card-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .card-reward {
       font-size: 13px;
+      color: #f3ba2f;
+      font-weight: bold;
+    }
+
+    .btn-action {
+      background: #f3ba2f;
+      color: #000;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-action:disabled {
+      background: #444;
+      color: #888;
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      height: 65px;
+      background: #181d27;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid #2b313a;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: #888;
+      font-size: 11px;
+      cursor: pointer;
+      width: 20%;
+    }
+
+    .nav-item.active {
+      color: #f3ba2f;
+    }
+
+    .nav-icon {
+      font-size: 20px;
+    }
+
+    .status-msg {
+      font-size: 12px;
       color: #ff4d4d;
       margin-top: 5px;
-      min-height: 18px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Header Section -->
-  <div class="header">
-    <div class="title">🚀 DropVerse Game</div>
-    <div class="subtitle">Tap the coin to earn DropVerse Coin</div>
-    <div class="balance-container">
-      <span style="font-size: 35px;">🪙</span>
-      <div class="balance" id="balance">0</div>
-      <span class="coin-tag">DVP</span>
+  <!-- TAB 1: HOME / TAP GAME -->
+  <div id="tab-home" class="tab-content active">
+    <div class="header">
+      <div class="title">🚀 DropVerse Game</div>
+      <div class="balance-container">
+        <span style="font-size: 30px;">🪙</span>
+        <div class="balance" id="balance">0</div>
+        <span class="coin-tag">DVP</span>
+      </div>
+    </div>
+
+    <div class="coin-container">
+      <div class="coin-btn" id="coin">
+        <div class="coin-inner">🦅</div>
+      </div>
+    </div>
+
+    <div class="energy-container">
+      <div class="energy-info">
+        <span>⚡ Energy</span>
+        <span><span id="energy">1000</span> / <span id="max-energy">1000</span></span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="energy-bar"></div>
+      </div>
+      <div class="status-msg" id="status-msg"></div>
     </div>
   </div>
 
-  <!-- DropVerse Tap Button -->
-  <div class="coin-container">
-    <div class="coin-btn" id="coin">
-      <div class="coin-inner">🦅</div>
-    </div>
-  </div>
+  <!-- TAB 2: TASKS -->
+  <div id="tab-tasks" class="tab-content">
+    <div class="title" style="margin-top: 10px;">📋 Complete Tasks</div>
+    <div style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Earn bonus DVP by completing simple tasks</div>
 
-  <!-- Energy Section -->
-  <div class="energy-container">
-    <div class="energy-info">
-      <span>⚡ Energy</span>
-      <span><span id="energy">1000</span> / <span id="max-energy">1000</span></span>
-    </div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="energy-bar"></div>
-    </div>
-    <div class="status-msg" id="status-msg"></div>
-  </div>
+    <div class="card-list">
+      <div class="card-item">
+        <div class="card-info">
+          <div class="card-title">Join Telegram Channel</div>
+          <div class="card-reward">+5,000 DVP</div>
+        </div>
+        <button class="btn-action" onclick="claimTask('tg_channel', 5000, this)">Claim</button>
+      </div>
 
-  <script>
-    // 1. Telegram WebApp Initialization
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.ready();
-      tg.expand();
-    }
-
-    // API Endpoint
-    const API_URL = 'https://uotdwlkodcmwpsbuimfb.supabase.co/functions/v1/dropverse-game';
-
-    // Game Variables
-    let coins = 0;
-    let energy = 1000;
-    let maxEnergy = 1000;
-    let pendingTaps = 0;
-    let tapSyncTimer = null;
-
-    // DOM Elements
-    const balanceEl = document.getElementById('balance');
-    const energyEl = document.getElementById('energy');
-    const maxEnergyEl = document.getElementById('max-energy');
-    const energyBar = document.getElementById('energy-bar');
-    const coinBtn = document.getElementById('coin');
-    const statusMsg = document.getElementById('status-msg');
-
-    // 2. Initial Data Sync with Backend
-    async function initGame() {
-      const initData = tg?.initData || '';
-      const user = tg?.initDataUnsafe?.user;
-
-      try {
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            initData: initData,
-            action: 'init',
-            telegram_id: user?.id
-          })
-        });
-
-        const data = await res.json();
-
-        if (res.ok && data) {
-          if (data.coins !== undefined) coins = data.coins;
-          if (data.energy !== undefined) energy = data.energy;
-          if (data.max_energy !== undefined) maxEnergy = data.max_energy;
-          updateUI();
-          statusMsg.innerText = '';
-        } else {
-          statusMsg.innerText = data.error || 'Server connection failed.';
-        }
-      } catch (err) {
-        console.error('Init Error:', err);
-        statusMsg.innerText = 'Connecting to server...';
-      }
-    }
-
-    // 3. Update User Interface
-    function updateUI() {
-      balanceEl.innerText = coins.toLocaleString();
-      energyEl.innerText = energy;
-      maxEnergyEl.innerText = maxEnergy;
-      const percentage = (energy / maxEnergy) * 100;
-      energyBar.style.width = percentage + '%';
-    }
-
-    // 4. Tap Event Handling
-    coinBtn.addEventListener('pointerdown', (e) => {
-      if (energy <= 0) {
-        statusMsg.innerText = 'Energy finished! Wait for recharge.';
-        return;
-      }
-
-      // Instant UI update
-      coins += 1;
-      energy -= 1;
-      pendingTaps += 1;
-      updateUI();
-
-      // Show Floating +1 Animation
-      showTapAnimation(e.clientX, e.clientY);
-
-      // Debounced Sync to Backend
-      clearTimeout(tapSyncTimer);
-      tapSyncTimer = setTimeout(syncTapsToBackend, 1000);
-    });
-
-    // 5. Send Tap Data to Supabase Backend
-    async function syncTapsToBackend() {
-      if (pendingTaps === 0) return;
-
-      const tapsToSend = pendingTaps;
-      pendingTaps = 0; 
-
-      const initData = tg?.initData || '';
-      const user = tg?.initDataUnsafe?.user;
-
-      try {
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            initData: initData,
-            action: 'tap',
-            count: tapsToSend,
-            telegram_id: user?.id
-          })
-        });
-
-        const data = await res.json();
-        if (!res.ok) {
-          console.error('Sync error:', data.error);
-          statusMsg.innerText = data.error || 'Failed to sync with server.';
-        } else {
-          statusMsg.innerText = '';
-        }
-      } catch (err) {
-        console.error('Network Error during sync:', err);
-      }
-    }
-
-    // 6. Floating Animation Helper
-    function showTapAnimation(x, y) {
-      const pop = document.createElement('div');
-      pop.className = 'tap-pop';
-      pop.innerText = '+1 DVP';
-      pop.style.left = (x - 15) + 'px';
-      pop.style.top = (y - 30) + 'px';
-      document.body.appendChild(pop);
-
-      setTimeout(() => {
-        pop.remove();
-      }, 800);
-    }
-
-    // Auto Energy Regeneration Every 2 Seconds
-    setInterval(() => {
-      if (energy < maxEnergy) {
-        energy = Math.min(maxEnergy, energy + 1);
-        updateUI();
-      }
-    }, 2000);
-
-    // Initialize Game on Load
-    initGame();
-  </script>
-</body>
-</html>
+      <div class="card-item">
+        <div class="card-info">
+          <div class="card-title">Follow Twitter / X</div>
+          <div
