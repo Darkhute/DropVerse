@@ -212,14 +212,17 @@ async function api(action, extra = {}) {
  }
 
  const response = await fetch(API_URL, {
-   method: "POST",
-   headers: {"Content-Type": "application/json"},
-   body: JSON.stringify({
-     initData: tg.initData,
-     action,
-     ...extra
-   })
- });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvdGR3bGtvZGNtd3BzYnVpbWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0NzEyMjYsImV4cCI6MjEwNzA0NzIyNn0.-D4hANf8pH3_CB9ZsnyidqXgv8faIpsSYKYcQ4bC_3M"
+  },
+  body: JSON.stringify({
+    initData: tg.initData,
+    action,
+    ...extra
+  })
+});
 
  const data = await response.json().catch(() => ({}));
 
