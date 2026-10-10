@@ -1,287 +1,59 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>DropVerse - Tap & Earn</title>
-  
-  <!-- Telegram WebApp SDK Script -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
-    }
+    <title>DropVerse</title>
 
-    body {
-      background-color: #0b0e14;
-      color: #ffffff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-    }
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f2f5f9;
+            padding: 30px;
+        }
 
-    /* Content Area */
-    .tab-content {
-      flex: 1;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      padding: 15px;
-      overflow-y: auto;
-    }
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 400px;
+            margin: auto;
+        }
 
-    .tab-content.active {
-      display: flex;
-    }
+        h1 {
+            font-size: 32px;
+        }
 
-    /* Header & Balance */
-    .header {
-      text-align: center;
-      margin-top: 5px;
-      margin-bottom: 10px;
-    }
-
-    .title {
-      font-size: 22px;
-      font-weight: bold;
-      color: #f3ba2f;
-    }
-
-    .balance-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 5px;
-    }
-
-    .balance {
-      font-size: 36px;
-      font-weight: 800;
-    }
-
-    .coin-tag {
-      font-size: 16px;
-      color: #f3ba2f;
-      font-weight: bold;
-    }
-
-    /* Tap Coin Button */
-    .coin-container {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: auto 0;
-    }
-
-    .coin-btn {
-      width: 210px;
-      height: 210px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #fcd535 0%, #f3ba2f 70%, #d99b00 100%);
-      box-shadow: 0 0 25px rgba(243, 186, 47, 0.4);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: transform 0.08s ease;
-      border: 6px solid #ffea79;
-    }
-
-    .coin-btn:active {
-      transform: scale(0.94);
-    }
-
-    .coin-inner {
-      font-size: 60px;
-    }
-
-    .tap-pop {
-      position: absolute;
-      font-size: 26px;
-      font-weight: bold;
-      color: #ffffff;
-      pointer-events: none;
-      animation: floatUp 0.8s ease-out forwards;
-    }
-
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-70px); }
-    }
-
-    /* Energy Bar */
-    .energy-container {
-      width: 100%;
-      max-width: 320px;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .energy-info {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      margin-bottom: 5px;
-      color: #ccc;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 12px;
-      background: #1e2329;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(90deg, #f3ba2f, #ffea79);
-    }
-
-    /* Task & Leaderboard UI Cards */
-    .card-list {
-      width: 100%;
-      max-width: 380px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 15px;
-    }
-
-    .card-item {
-      background: #181d27;
-      padding: 12px 15px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border: 1px solid #2b313a;
-    }
-
-    .card-info {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .card-title {
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .card-reward {
-      font-size: 13px;
-      color: #f3ba2f;
-      font-weight: bold;
-    }
-
-    .btn-action {
-      background: #f3ba2f;
-      color: #000;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .btn-action:disabled {
-      background: #444;
-      color: #888;
-    }
-
-    /* Bottom Navigation Bar */
-    .bottom-nav {
-      height: 65px;
-      background: #181d27;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      border-top: 1px solid #2b313a;
-    }
-
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      color: #888;
-      font-size: 11px;
-      cursor: pointer;
-      width: 20%;
-    }
-
-    .nav-item.active {
-      color: #f3ba2f;
-    }
-
-    .nav-icon {
-      font-size: 20px;
-    }
-
-    .status-msg {
-      font-size: 12px;
-      color: #ff4d4d;
-      margin-top: 5px;
-    }
-  </style>
+        button {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
+
 <body>
 
-  <!-- TAB 1: HOME / TAP GAME -->
-  <div id="tab-home" class="tab-content active">
-    <div class="header">
-      <div class="title">🚀 DropVerse Game</div>
-      <div class="balance-container">
-        <span style="font-size: 30px;">🪙</span>
-        <div class="balance" id="balance">0</div>
-        <span class="coin-tag">DVP</span>
-      </div>
-    </div>
+<div class="box">
 
-    <div class="coin-container">
-      <div class="coin-btn" id="coin">
-        <div class="coin-inner">🦅</div>
-      </div>
-    </div>
+    <h1>🚀 DropVerse</h1>
 
-    <div class="energy-container">
-      <div class="energy-info">
-        <span>⚡ Energy</span>
-        <span><span id="energy">1000</span> / <span id="max-energy">1000</span></span>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="energy-bar"></div>
-      </div>
-      <div class="status-msg" id="status-msg"></div>
-    </div>
-  </div>
+    <p>Complete Tasks. Earn Points. Get Rewards.</p>
 
-  <!-- TAB 2: TASKS -->
-  <div id="tab-tasks" class="tab-content">
-    <div class="title" style="margin-top: 10px;">📋 Complete Tasks</div>
-    <div style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Earn bonus DVP by completing simple tasks</div>
+    <h2>🪙 0 DVP</h2>
 
-    <div class="card-list">
-      <div class="card-item">
-        <div class="card-info">
-          <div class="card-title">Join Telegram Channel</div>
-          <div class="card-reward">+5,000 DVP</div>
-        </div>
-        <button class="btn-action" onclick="claimTask('tg_channel', 5000, this)">Claim</button>
-      </div>
+    <button>🎯 Tasks</button>
+    <button>👥 Refer Friends</button>
+    <button>🏆 Leaderboard</button>
+    <button>💰 Rewards</button>
 
-      <div class="card-item">
-        <div class="card-info">
-          <div class="card-title">Follow Twitter / X</div>
-          <div
+</div>
+
+</body>
+</html>
