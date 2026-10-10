@@ -41,12 +41,12 @@ footer{color:#82769d;font-size:11px;margin-top:24px}
 
 <section class="card">
  <div class="small">YOUR TOTAL BALANCE</div>
- <div class="balance"><span id="points">0</span> <span style="font-size:16px">DVP</span></div>
+ <div class="balance"><span id="points">0</span> <span style="font-size:16px">dropverse-game</span></div>
  <div class="small">Keep tapping to collect points!</div>
 </section>
 
 <section class="coin-area">
- <button id="coin" aria-label="Tap to earn">DVP</button>
+ <button id="coin" aria-label="Tap to earn">dropverse-game</button>
  <p>✨ TAP TO EARN ✨</p>
 </section>
 
@@ -299,7 +299,7 @@ async function showLeaderboard(content) {
       const name = row.username || "Player";
       const score = Number(row.points) || 0;
       item.textContent =
-        `${index + 1}. ${name} — ${score.toLocaleString()} DVP`;
+        `${index + 1}. ${name} — ${score.toLocaleString()} dropverse-game`;
       content.appendChild(item);
     });
   } catch (error) {
@@ -317,7 +317,7 @@ function showPage(page) {
 
   if (page === "home") {
     content.innerHTML =
-      "<h3>🏠 Home</h3><p class='small'>Tap the coin and collect DVP points!</p>";
+      "<h3>🏠 Home</h3><p class='small'>Tap the coin and collect  points!</p>";
   } else if (page === "tasks") {
     content.innerHTML =
       "<h3>📋 Tasks</h3><p class='small'>Tasks are not connected to the backend yet.</p>";
