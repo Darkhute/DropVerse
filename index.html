@@ -40,6 +40,12 @@
       font-size: 24px;
       font-weight: bold;
       color: #f3ba2f;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #888888;
       margin-bottom: 10px;
     }
 
@@ -51,15 +57,16 @@
       margin-top: 10px;
     }
 
-    .balance-container img {
-      width: 45px;
-      height: 45px;
-    }
-
     .balance {
-      font-size: 40px;
+      font-size: 38px;
       font-weight: 800;
       color: #ffffff;
+    }
+
+    .coin-tag {
+      font-size: 18px;
+      color: #f3ba2f;
+      font-weight: bold;
     }
 
     /* Tap Area (Notcoin Style) */
@@ -98,7 +105,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 70px;
+      font-size: 65px;
     }
 
     /* Floating +1 Text Animation */
@@ -164,14 +171,16 @@
 
   <!-- Header Section -->
   <div class="header">
-    <div class="title">🚀 DropVerse Airdrop</div>
+    <div class="title">🚀 DropVerse Game</div>
+    <div class="subtitle">Tap the coin to earn DropVerse Coin</div>
     <div class="balance-container">
       <span style="font-size: 35px;">🪙</span>
       <div class="balance" id="balance">0</div>
+      <span class="coin-tag">DVP</span>
     </div>
   </div>
 
-  <!-- Notcoin Tap Button -->
+  <!-- DropVerse Tap Button -->
   <div class="coin-container">
     <div class="coin-btn" id="coin">
       <div class="coin-inner">🦅</div>
@@ -258,7 +267,7 @@
       energyBar.style.width = percentage + '%';
     }
 
-    // 4. Tap Event Handling (Optimistic Local Update)
+    // 4. Tap Event Handling
     coinBtn.addEventListener('pointerdown', (e) => {
       if (energy <= 0) {
         statusMsg.innerText = 'Energy finished! Wait for recharge.';
@@ -271,10 +280,10 @@
       pendingTaps += 1;
       updateUI();
 
-      // Show Floating +1 Text Animation
+      // Show Floating +1 Animation
       showTapAnimation(e.clientX, e.clientY);
 
-      // Debounced Sync to Backend (Send taps in batch)
+      // Debounced Sync to Backend
       clearTimeout(tapSyncTimer);
       tapSyncTimer = setTimeout(syncTapsToBackend, 1000);
     });
@@ -284,7 +293,7 @@
       if (pendingTaps === 0) return;
 
       const tapsToSend = pendingTaps;
-      pendingTaps = 0; // Reset count
+      pendingTaps = 0; 
 
       const initData = tg?.initData || '';
       const user = tg?.initDataUnsafe?.user;
@@ -317,7 +326,7 @@
     function showTapAnimation(x, y) {
       const pop = document.createElement('div');
       pop.className = 'tap-pop';
-      pop.innerText = '+1';
+      pop.innerText = '+1 DVP';
       pop.style.left = (x - 15) + 'px';
       pop.style.top = (y - 30) + 'px';
       document.body.appendChild(pop);
