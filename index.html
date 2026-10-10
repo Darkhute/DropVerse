@@ -2,132 +2,184 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Dropverse Point</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box}
 body{
-  margin:0;background:linear-gradient(160deg,#080b20,#29104c);
-  color:white;font-family:Arial,sans-serif;text-align:center;
+ margin:0;background:linear-gradient(160deg,#080b20,#211044);
+ color:white;font-family:Arial,sans-serif;text-align:center;
+ user-select:none
 }
-.app{max-width:430px;margin:auto;padding:24px 18px}
-h1{color:#c4b5fd;font-size:24px}
-.subtitle{color:#b9a8ec}
+.app{max-width:430px;margin:auto;padding:20px 16px 35px}
+.header{display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:19px;font-weight:bold;color:#c4b5fd}
+.avatar{background:#302052;border-radius:50%;padding:12px}
 .card{
-  background:#ffffff0d;border:1px solid #6651a6;
-  border-radius:20px;padding:20px;margin-top:28px;
+ background:rgba(255,255,255,.06);
+ border:1px solid #574481;border-radius:18px;
+ padding:18px;margin-top:22px
 }
-.label{color:#c4b5fd}
-#balance{font-size:35px;font-weight:bold;margin:12px}
+.small{color:#b7a9dd;font-size:13px}
+.balance{font-size:35px;font-weight:bold;margin:10px}
+.coin-area{padding:20px 0}
 #coin{
-  width:185px;height:185px;border-radius:50%;margin:32px auto;
-  border:7px solid #e9d5ff;
-  background:radial-gradient(circle at 35% 25%,white,#a78bfa 38%,#6d28d9 80%);
-  color:white;font-size:34px;font-weight:bold;
-  box-shadow:0 0 35px #8b5cf688;cursor:pointer;
+ width:205px;height:205px;border-radius:50%;
+ border:8px solid #e9d5ff;
+ background:radial-gradient(circle at 32% 25%,#fff,#b9a0ff 28%,#8147df 65%,#48218c);
+ box-shadow:0 0 25px #9565ff, inset 0 -8px 15px #3a176d;
+ color:white;font-size:36px;font-weight:bold;
+ cursor:pointer;touch-action:manipulation;
+ transition:transform .08s
 }
 #coin:active{transform:scale(.94)}
-.energy{margin:20px 0;text-align:left}
-.track{height:12px;background:#44305e;border-radius:12px;overflow:hidden;margin-top:10px}
-#bar{height:100%;width:100%;background:#facc15}
-button{cursor:pointer}
-.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.menu button,.reward{
-  border:1px solid #6651a6;background:#291747;
-  color:white;padding:13px 5px;border-radius:12px;
+.energy-head{display:flex;justify-content:space-between;font-size:14px}
+.track{height:11px;background:#38284e;border-radius:10px;overflow:hidden;margin-top:10px}
+#energyBar{height:100%;width:100%;background:linear-gradient(90deg,#facc15,#f97316)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:22px}
+.tile{
+ border:1px solid #574481;border-radius:14px;
+ background:#211638;padding:15px 4px;color:white;
+ font-size:12px;cursor:pointer
 }
-.reward{background:#7c3aed;margin:15px 0}
-#message{color:#c4b5fd;min-height:22px;margin-top:15px}
-footer{font-size:12px;color:#9ca3af;margin-top:30px}
+.tile span{display:block;font-size:23px;margin-bottom:7px}
+#content{
+ margin-top:15px;background:#ffffff08;border-radius:15px;
+ padding:15px;min-height:60px;overflow-wrap:anywhere
+}
+button{font-family:inherit}
+#message{min-height:22px;color:#c4b5fd;font-size:13px;margin-top:12px}
+footer{color:#82769d;font-size:11px;margin-top:24px}
 </style>
 </head>
 <body>
 <main class="app">
-  <h1>💎 DRO PVERSE POINT</h1>
-  <div class="subtitle">TAP • EARN • EXPLORE</div>
-  <section class="card">
-    <div class="label">YOUR BALANCE</div>
-    <div id="balance">0 DVP</div>
-    <div id="user">Welcome, Player!</div>
-  </section>
-
-DVP
-
-  <div>Tap to collect points!</div>
-  <section class="energy">
-    ⚡ Energy: <span id="energy">1000</span>/1000
-    <div class="track"><div id="bar"></div></div>
-  </section>
-
-🎁 Daily Reward
-
-  <nav class="menu">
-    <button data-page="home">🏠 Home</button>
-    <button data-page="friends">👥 Friends</button>
-    <button data-page="rank">🏆 Rank</button>
-  </nav>
-  <div id="message"></div>
-  <footer>Dropverse Point © 2026</footer>
+<header class="header">
+ <div class="logo">💎 DRO PVERSE</div>
+ <div class="avatar">👤 <span id="username">Player</span></div>
+</header>
+<section class="card">
+ <div class="small">YOUR TOTAL BALANCE</div>
+ <div class="balance"><span id="points">0</span> <span style="font-size:16px">DVP</span></div>
+ <div class="small">Keep tapping to collect points!</div>
+</section>
+<section class="coin-area">
+ <button id="coin" aria-label="Tap to earn">DVP</button>
+ <p>✨ TAP TO EARN ✨</p>
+</section>
+<section class="card">
+ <div class="energy-head">
+  <span>⚡ Energy</span>
+  <span><b id="energy">1000</b> / 1000</span>
+ </div>
+ <div class="track"><div id="energyBar"></div></div>
+</section>
+<nav class="grid">
+ <button class="tile" data-page="home"><span>🏠</span>Home</button>
+ <button class="tile" data-page="tasks"><span>📋</span>Tasks</button>
+ <button class="tile" data-page="daily"><span>🎁</span>Daily Reward</button>
+ <button class="tile" data-page="friends"><span>👥</span>Friends</button>
+ <button class="tile" data-page="rank"><span>🏆</span>Leaderboard</button>
+ <button class="tile" data-page="profile"><span>👤</span>Profile</button>
+</nav>
+<section id="content">
+ <h3>Welcome to Dropverse Point!</h3>
+ <p class="small">Tap the coin to earn DVP points.</p>
+</section>
+<div id="message"></div>
+<footer>DROPVERSE POINT © 2026</footer>
 </main>
 <script>
-const tg = window.Telegram?.WebApp;
+const tg=window.Telegram?.WebApp;
 tg?.ready();
 tg?.expand();
-let points = 0;
-let energy = 1000;
-const maxEnergy = 1000;
-let lastReward = "";
-const $ = id => document.getElementById(id);
-const savedUser = tg?.initDataUnsafe?.user;
-if (savedUser) {
-  $("user").textContent = "Welcome, " + savedUser.first_name + "!";
+const MAX_ENERGY=1000;
+const REWARD=100;
+let points=0;
+let energy=MAX_ENERGY;
+let lastReward="";
+let rechargeTime=Date.now();
+const $=id=>document.getElementById(id);
+const user=tg?.initDataUnsafe?.user;
+if(user){
+ $("username").textContent=user.first_name||"Player";
 }
-function render() {
-  $("balance").textContent = points.toLocaleString() + " DVP";
-  $("energy").textContent = energy;
-  $("bar").style.width = (energy / maxEnergy * 100) + "%";
+function render(){
+ $("points").textContent=points.toLocaleString();
+ $("energy").textContent=energy;
+ $("energyBar").style.width=(energy/MAX_ENERGY*100)+"%";
 }
-$("coin").addEventListener("click", () => {
-  if (energy < 1) {
-    $("message").textContent = "⚡ Wait for energy recharge!";
+function message(text){
+ $("message").textContent=text;
+}
+$("coin").addEventListener("click",()=>{
+ if(energy<=0){
+  message("⚡ No energy! Wait for recharge.");
+  return;
+ }
+ points++;
+ energy--;
+ message("+1 DVP ✨");
+ tg?.HapticFeedback?.impactOccurred("light");
+ render();
+});
+function showPage(page){
+ const content=$("content");
+ if(page==="home"){
+  content.innerHTML="<h3>🏠 Home</h3><p class='small'>Tap the coin and collect DVP points!</p>";
+ }
+ else if(page==="tasks"){
+  content.innerHTML="<h3>📋 Tasks</h3><p class='small'>Tasks will be added when the backend is connected.</p>";
+ }
+ else if(page==="daily"){
+  content.innerHTML="<h3>🎁 Daily Reward</h3><p>Collect 100 demo points once per day.</p><button id='claim' class='tile'>Claim Reward</button>";
+  $("claim").onclick=()=>{
+   const today=new Date().toLocaleDateString("en-CA");
+   if(lastReward===today){
+    message("You have already claimed today's reward!");
     return;
+   }
+   lastReward=today;
+   points+=REWARD;
+   message("🎉 +100 demo DVP!");
+   render();
+  };
+ }
+ else if(page==="friends"){
+  const botUsername=tg?.initDataUnsafe?.user?.username;
+  content.innerHTML="<h3>👥 Invite Friends</h3><p class='small'>Referral rewards will work after backend setup.</p>";
+  if(botUsername){
+   const link="https://t.me/"+botUsername;
+   const button=document.createElement("button");
+   button.className="tile";
+   button.textContent="Share";
+   button.onclick=()=>tg.openTelegramLink("https://t.me/share/url?url="+encodeURIComponent(link));
+   content.appendChild(button);
   }
-  points += 1;
-  energy -= 1;
-  $("message").textContent = "+1 DVP";
-  tg?.HapticFeedback?.impactOccurred("light");
+ }
+ else if(page==="rank"){
+  content.innerHTML="<h3>🏆 Leaderboard</h3><p class='small'>Connect the database to display real rankings.</p>";
+ }
+ else if(page==="profile"){
+  content.innerHTML="<h3>👤 Profile</h3><p class='small'>Name: "+(user?.first_name||"Guest")+"</p><p class='small'>Demo points: "+points+"</p>";
+ }
+}
+document.querySelectorAll("[data-page]").forEach(button=>{
+ button.addEventListener("click",()=>{
+  showPage(button.dataset.page);
+  message("");
+ });
+});
+setInterval(()=>{
+ const now=Date.now();
+ const elapsed=Math.floor((now-rechargeTime)/3000);
+ if(elapsed>0){
+  energy=Math.min(MAX_ENERGY,energy+elapsed);
+  rechargeTime+=elapsed*3000;
   render();
-});
-$("daily").addEventListener("click", () => {
-  const today = new Date().toISOString().slice(0, 10);
-  if (lastReward === today) {
-    $("message").textContent = "Daily reward already collected!";
-    return;
-  }
-  lastReward = today;
-  points += 100;
-  $("message").textContent = "🎉 Demo reward: +100 DVP";
-  render();
-});
-document.querySelectorAll("[data-page]").forEach(button => {
-  button.addEventListener("click", () => {
-    const page = button.dataset.page;
-    if (page === "home") {
-      $("message").textContent = "Welcome to Dropverse Point!";
-    } else if (page === "friends") {
-      $("message").textContent = "Referral system: coming soon!";
-    } else {
-      $("message").textContent = "Leaderboard: coming soon!";
-    }
-  });
-});
-setInterval(() => {
-  if (energy < maxEnergy) {
-    energy = Math.min(maxEnergy, energy + 1);
-    render();
-  }
-}, 3000);
+ }
+},1000);
 render();
 </script>
 </body>
