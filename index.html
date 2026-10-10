@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,74 +8,56 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;background:linear-gradient(160deg,#080b20,#211044);
- color:white;font-family:Arial,sans-serif;text-align:center;
- user-select:none
-}
+body{margin:0;background:linear-gradient(160deg,#080b20,#211044);color:white;font-family:Arial,sans-serif;text-align:center;user-select:none}
 .app{max-width:430px;margin:auto;padding:20px 16px 35px}
 .header{display:flex;justify-content:space-between;align-items:center}
 .logo{font-size:19px;font-weight:bold;color:#c4b5fd}
 .avatar{background:#302052;border-radius:50%;padding:12px}
-.card{
- background:rgba(255,255,255,.06);
- border:1px solid #574481;border-radius:18px;
- padding:18px;margin-top:22px
-}
+.card{background:rgba(255,255,255,.06);border:1px solid #574481;border-radius:18px;padding:18px;margin-top:22px}
 .small{color:#b7a9dd;font-size:13px}
 .balance{font-size:35px;font-weight:bold;margin:10px}
 .coin-area{padding:20px 0}
-#coin{
- width:205px;height:205px;border-radius:50%;
- border:8px solid #e9d5ff;
- background:radial-gradient(circle at 32% 25%,#fff,#b9a0ff 28%,#8147df 65%,#48218c);
- box-shadow:0 0 25px #9565ff, inset 0 -8px 15px #3a176d;
- color:white;font-size:36px;font-weight:bold;
- cursor:pointer;touch-action:manipulation;
- transition:transform .08s
-}
+#coin{width:205px;height:205px;border-radius:50%;border:8px solid #e9d5ff;background:radial-gradient(circle at 32% 25%,#fff,#b9a0ff 28%,#8147df 65%,#48218c);box-shadow:0 0 25px #9565ff,inset 0 -8px 15px #3a176d;color:white;font-size:36px;font-weight:bold;cursor:pointer;touch-action:manipulation;transition:transform .08s}
 #coin:active{transform:scale(.94)}
+#coin:disabled{opacity:.6}
 .energy-head{display:flex;justify-content:space-between;font-size:14px}
 .track{height:11px;background:#38284e;border-radius:10px;overflow:hidden;margin-top:10px}
 #energyBar{height:100%;width:100%;background:linear-gradient(90deg,#facc15,#f97316)}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:22px}
-.tile{
- border:1px solid #574481;border-radius:14px;
- background:#211638;padding:15px 4px;color:white;
- font-size:12px;cursor:pointer
-}
+.tile{border:1px solid #574481;border-radius:14px;background:#211638;padding:15px 4px;color:white;font-size:12px;cursor:pointer}
 .tile span{display:block;font-size:23px;margin-bottom:7px}
-#content{
- margin-top:15px;background:#ffffff08;border-radius:15px;
- padding:15px;min-height:60px;overflow-wrap:anywhere
-}
+#content{margin-top:15px;background:#ffffff08;border-radius:15px;padding:15px;min-height:60px;overflow-wrap:anywhere}
 button{font-family:inherit}
-#message{min-height:22px;color:#c4b5fd;font-size:13px;margin-top:12px}
+#message{min-height:22px;color:#c4b5fd;font-size:13px;margin-top:12px;overflow-wrap:anywhere}
 footer{color:#82769d;font-size:11px;margin-top:24px}
 </style>
 </head>
 <body>
 <main class="app">
 <header class="header">
- <div class="logo">💎 DRO PVERSE</div>
+ <div class="logo">💎 DROPVERSE</div>
  <div class="avatar">👤 <span id="username">Player</span></div>
 </header>
+
 <section class="card">
  <div class="small">YOUR TOTAL BALANCE</div>
  <div class="balance"><span id="points">0</span> <span style="font-size:16px">DVP</span></div>
  <div class="small">Keep tapping to collect points!</div>
 </section>
+
 <section class="coin-area">
  <button id="coin" aria-label="Tap to earn">DVP</button>
  <p>✨ TAP TO EARN ✨</p>
 </section>
+
 <section class="card">
  <div class="energy-head">
   <span>⚡ Energy</span>
-  <span><b id="energy">1000</b> / 1000</span>
+  <span><b id="energy">0</b> / <span id="maxEnergy">1000</span></span>
  </div>
  <div class="track"><div id="energyBar"></div></div>
 </section>
+
 <nav class="grid">
  <button class="tile" data-page="home"><span>🏠</span>Home</button>
  <button class="tile" data-page="tasks"><span>📋</span>Tasks</button>
@@ -83,104 +66,318 @@ footer{color:#82769d;font-size:11px;margin-top:24px}
  <button class="tile" data-page="rank"><span>🏆</span>Leaderboard</button>
  <button class="tile" data-page="profile"><span>👤</span>Profile</button>
 </nav>
+
 <section id="content">
  <h3>Welcome to Dropverse Point!</h3>
- <p class="small">Tap the coin to earn DVP points.</p>
+ <p class="small">Connecting to your account...</p>
 </section>
-<div id="message"></div>
+<div id="message">Connecting...</div>
 <footer>DROPVERSE POINT © 2026</footer>
 </main>
+
 <script>
-const tg=window.Telegram?.WebApp;
+"use strict";
+
+const tg = window.Telegram?.WebApp;
 tg?.ready();
 tg?.expand();
-const MAX_ENERGY=1000;
-const REWARD=100;
-let points=0;
-let energy=MAX_ENERGY;
-let lastReward="";
-let rechargeTime=Date.now();
-const $=id=>document.getElementById(id);
-const user=tg?.initDataUnsafe?.user;
-if(user){
- $("username").textContent=user.first_name||"Player";
+
+const API_URL = "https://uotdwlkodcmwpsbuimfb.supabase.co/functions/v1/dvp-api";
+const SUPABASE_KEY = "sb_publishable_x7a_qp-lzeHsisq8XDv08g_Kunzq169";
+
+const MAX_ENERGY_DEFAULT = 1000;
+const $ = id => document.getElementById(id);
+
+let points = 0;
+let energy = 0;
+let maxEnergy = MAX_ENERGY_DEFAULT;
+let player = null;
+let busy = false;
+let pendingTaps = 0;
+let tapTimer = null;
+let isReady = false;
+
+const initData = tg?.initData || "";
+
+function message(text) {
+  $("message").textContent = text;
 }
-function render(){
- $("points").textContent=points.toLocaleString();
- $("energy").textContent=energy;
- $("energyBar").style.width=(energy/MAX_ENERGY*100)+"%";
+
+function render() {
+  $("points").textContent = Number(points).toLocaleString();
+  $("energy").textContent = Math.max(0, Math.floor(energy));
+  $("maxEnergy").textContent = maxEnergy;
+  $("energyBar").style.width =
+    Math.max(0, Math.min(100, energy / maxEnergy * 100)) + "%";
+  $("coin").disabled = !isReady || energy <= 0;
 }
-function message(text){
- $("message").textContent=text;
-}
-$("coin").addEventListener("click",()=>{
- if(energy<=0){
-  message("⚡ No energy! Wait for recharge.");
-  return;
- }
- points++;
- energy--;
- message("+1 DVP ✨");
- tg?.HapticFeedback?.impactOccurred("light");
- render();
-});
-function showPage(page){
- const content=$("content");
- if(page==="home"){
-  content.innerHTML="<h3>🏠 Home</h3><p class='small'>Tap the coin and collect DVP points!</p>";
- }
- else if(page==="tasks"){
-  content.innerHTML="<h3>📋 Tasks</h3><p class='small'>Tasks will be added when the backend is connected.</p>";
- }
- else if(page==="daily"){
-  content.innerHTML="<h3>🎁 Daily Reward</h3><p>Collect 100 demo points once per day.</p><button id='claim' class='tile'>Claim Reward</button>";
-  $("claim").onclick=()=>{
-   const today=new Date().toLocaleDateString("en-CA");
-   if(lastReward===today){
-    message("You have already claimed today's reward!");
-    return;
-   }
-   lastReward=today;
-   points+=REWARD;
-   message("🎉 +100 demo DVP!");
-   render();
-  };
- }
- else if(page==="friends"){
-  const botUsername=tg?.initDataUnsafe?.user?.username;
-  content.innerHTML="<h3>👥 Invite Friends</h3><p class='small'>Referral rewards will work after backend setup.</p>";
-  if(botUsername){
-   const link="https://t.me/"+botUsername;
-   const button=document.createElement("button");
-   button.className="tile";
-   button.textContent="Share";
-   button.onclick=()=>tg.openTelegramLink("https://t.me/share/url?url="+encodeURIComponent(link));
-   content.appendChild(button);
+
+function findPlayerObject(value, depth = 0) {
+  if (depth > 5 || value == null) return null;
+
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const found = findPlayerObject(item, depth + 1);
+      if (found) return found;
+    }
+    return null;
   }
- }
- else if(page==="rank"){
-  content.innerHTML="<h3>🏆 Leaderboard</h3><p class='small'>Connect the database to display real rankings.</p>";
- }
- else if(page==="profile"){
-  content.innerHTML="<h3>👤 Profile</h3><p class='small'>Name: "+(user?.first_name||"Guest")+"</p><p class='small'>Demo points: "+points+"</p>";
- }
+
+  if (typeof value !== "object") return null;
+
+  if (
+    value.points !== undefined &&
+    value.energy !== undefined
+  ) {
+    return value;
+  }
+
+  for (const key of ["player", "profile", "data", "result"]) {
+    if (value[key] !== undefined) {
+      const found = findPlayerObject(value[key], depth + 1);
+      if (found) return found;
+    }
+  }
+
+  return null;
 }
-document.querySelectorAll("[data-page]").forEach(button=>{
- button.addEventListener("click",()=>{
-  showPage(button.dataset.page);
-  message("");
- });
-});
-setInterval(()=>{
- const now=Date.now();
- const elapsed=Math.floor((now-rechargeTime)/3000);
- if(elapsed>0){
-  energy=Math.min(MAX_ENERGY,energy+elapsed);
-  rechargeTime+=elapsed*3000;
+
+async function api(action, extra = {}) {
+  if (!initData) {
+    throw new Error(
+      "Open Dropverse Point from its Telegram Mini App button first."
+    );
+  }
+
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_KEY
+    },
+    body: JSON.stringify({
+      action,
+      initData,
+      ...extra
+    })
+  });
+
+  const text = await response.text();
+  let result;
+
+  try {
+    result = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error("The server returned an unreadable response.");
+  }
+
+  if (!response.ok || result.error || result.success === false) {
+    throw new Error(
+      result.error || result.message || `Request failed (${response.status})`
+    );
+  }
+
+  return result;
+}
+
+async function loadProfile(showMessage = false) {
+  const result = await api("profile");
+  const p = findPlayerObject(result);
+
+  if (!p) {
+    throw new Error("Profile data was not found in the API response.");
+  }
+
+  player = p;
+  points = Number(p.points) || 0;
+  energy = Number(p.energy) || 0;
+  maxEnergy = Number(p.max_energy) || MAX_ENERGY_DEFAULT;
+
+  $("username").textContent =
+    p.username || tg?.initDataUnsafe?.user?.first_name || "Player";
+
+  isReady = true;
   render();
- }
-},1000);
-render();
+
+  if (showMessage) message("✅ Account synced with the server.");
+  return p;
+}
+
+async function flushTaps() {
+  if (busy || pendingTaps <= 0) return;
+
+  busy = true;
+  clearTimeout(tapTimer);
+
+  try {
+    while (pendingTaps > 0) {
+      const batch = Math.min(10, pendingTaps);
+      pendingTaps -= batch;
+
+      try {
+        await api("tap", { taps: batch });
+        await loadProfile();
+        message("✅ Your points have been saved.");
+      } catch (error) {
+        pendingTaps = 0;
+        await loadProfile().catch(() => {});
+        throw error;
+      }
+    }
+  } catch (error) {
+    message("⚠️ " + error.message);
+  } finally {
+    busy = false;
+    render();
+    if (pendingTaps > 0) {
+      tapTimer = setTimeout(flushTaps, 200);
+    }
+  }
+}
+
+$("coin").addEventListener("click", () => {
+  if (!isReady) {
+    message("Please wait for your account to load.");
+    return;
+  }
+
+  if (energy <= 0) {
+    message("⚡ No energy available. Try again after recharge.");
+    return;
+  }
+
+  energy = Math.max(0, energy - 1);
+  pendingTaps += 1;
+  render();
+  message("Saving your taps...");
+  tg?.HapticFeedback?.impactOccurred("light");
+
+  clearTimeout(tapTimer);
+  if (pendingTaps >= 10) {
+    flushTaps();
+  } else {
+    tapTimer = setTimeout(flushTaps, 250);
+  }
+});
+
+async function claimDaily() {
+  try {
+    message("Claiming your daily reward...");
+    const result = await api("daily-reward");
+    await loadProfile();
+
+    message(
+      result.message ||
+      "🎉 Daily reward request completed. Your balance is updated."
+    );
+  } catch (error) {
+    message("⚠️ " + error.message);
+  }
+}
+
+async function showLeaderboard(content) {
+  content.innerHTML =
+    "<h3>🏆 Leaderboard</h3><p class='small'>Loading rankings...</p>";
+
+  try {
+    const result = await api("leaderboard");
+    const rows = Array.isArray(result)
+      ? result
+      : (result.leaderboard || result.players || result.data || []);
+
+    if (!Array.isArray(rows) || rows.length === 0) {
+      content.innerHTML =
+        "<h3>🏆 Leaderboard</h3><p class='small'>No rankings available yet.</p>";
+      return;
+    }
+
+    content.innerHTML = "<h3>🏆 Leaderboard</h3>";
+
+    rows.slice(0, 50).forEach((row, index) => {
+      const item = document.createElement("p");
+      item.className = "small";
+      const name = row.username || "Player";
+      const score = Number(row.points) || 0;
+      item.textContent =
+        `${index + 1}. ${name} — ${score.toLocaleString()} DVP`;
+      content.appendChild(item);
+    });
+  } catch (error) {
+    content.innerHTML = "<h3>🏆 Leaderboard</h3>";
+    const p = document.createElement("p");
+    p.className = "small";
+    p.textContent = "Could not load rankings: " + error.message;
+    content.appendChild(p);
+  }
+}
+
+function showPage(page) {
+  const content = $("content");
+  content.replaceChildren();
+
+  if (page === "home") {
+    content.innerHTML =
+      "<h3>🏠 Home</h3><p class='small'>Tap the coin and collect DVP points!</p>";
+  } else if (page === "tasks") {
+    content.innerHTML =
+      "<h3>📋 Tasks</h3><p class='small'>Tasks are not connected to the backend yet.</p>";
+  } else if (page === "daily") {
+    content.innerHTML =
+      "<h3>🎁 Daily Reward</h3><p class='small'>Claim your daily reward from the server.</p>";
+
+    const button = document.createElement("button");
+    button.className = "tile";
+    button.textContent = "Claim Reward";
+    button.onclick = claimDaily;
+    content.appendChild(button);
+  } else if (page === "friends") {
+    content.innerHTML =
+      "<h3>👥 Invite Friends</h3><p class='small'>Referral rewards need a referral system and your bot's username.</p>";
+  } else if (page === "rank") {
+    showLeaderboard(content);
+  } else if (page === "profile") {
+    const heading = document.createElement("h3");
+    heading.textContent = "👤 Profile";
+    const name = document.createElement("p");
+    name.className = "small";
+    name.textContent =
+      "Name: " + (player?.username ||
+        tg?.initDataUnsafe?.user?.first_name || "Player");
+    const score = document.createElement("p");
+    score.className = "small";
+    score.textContent = "Points: " + points.toLocaleString();
+    content.append(heading, name, score);
+  }
+
+  message("");
+}
+
+document.querySelectorAll("[data-page]").forEach(button => {
+  button.addEventListener("click", () => showPage(button.dataset.page));
+});
+
+async function startApp() {
+  render();
+
+  if (!initData) {
+    message("⚠️ Open this app inside Telegram to sign in.");
+    $("content").innerHTML =
+      "<h3>Welcome to Dropverse Point!</h3><p class='small'>Please open the Mini App from your Telegram bot.</p>";
+    return;
+  }
+
+  try {
+    await loadProfile(true);
+    $("content").innerHTML =
+      "<h3>Welcome to Dropverse Point!</h3><p class='small'>Your account is connected to the server.</p>";
+  } catch (error) {
+    isReady = false;
+    render();
+    message("⚠️ " + error.message);
+  }
+}
+
+startApp();
 </script>
 </body>
 </html>
