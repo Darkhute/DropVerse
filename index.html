@@ -1,391 +1,342 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<title>DropVerse</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>DropVerse - Tap to Earn</title>
+  
+  <!-- Telegram WebApp SDK Script -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:white;touch-action:pan-y}
-.container{max-width:480px;margin:auto;min-height:100vh;padding:20px;padding-bottom:90px}
-.header{text-align:center;margin-bottom:20px}
-.logo{font-size:45px}
-.title{font-size:28px;font-weight:bold}
-.subtitle{color:#9da6bd;font-size:14px}
-.balance{background:#151c32;border-radius:20px;padding:22px;text-align:center;margin-bottom:18px}
-.balance-label{color:#9da6bd;font-size:14px}
-.balance-number{font-size:38px;font-weight:bold;margin-top:8px}
-.coin{margin:25px auto;width:190px;height:190px;border-radius:50%;background:linear-gradient(145deg,#ffd84d,#f0a900);display:flex;align-items:center;justify-content:center;font-size:75px;box-shadow:0 10px 40px rgba(255,193,7,.3);user-select:none;-webkit-user-select:none;touch-action:none;cursor:pointer;transition:transform .08s}
-.coin:active{transform:scale(.94)}
-.energy-box{text-align:center;color:#cbd2e5;margin-bottom:20px}
-.progress{height:9px;background:#252d44;border-radius:20px;overflow:hidden;margin-top:8px}
-.progress-bar{height:100%;width:100%;background:#ffd34e;transition:width .15s}
-.section{background:#151c32;padding:18px;border-radius:18px;margin-top:15px}
-.section h2{margin-top:0}
-.task{background:#202941;padding:14px;border-radius:13px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.task button,.action-button{border:0;background:#ffd34e;color:#111;padding:9px 14px;border-radius:10px;font-weight:bold}
-.referral{text-align:center}
-.referral-code{background:#0d1426;padding:14px;border-radius:12px;margin:12px 0;word-break:break-all;color:#ffd34e}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:auto;background:#12192c;display:flex;justify-content:space-around;padding:12px 5px;border-top:1px solid #28314a}
-.nav-btn{background:none;border:none;color:#aab3c9;font-size:12px}
-.nav-btn.active{color:#ffd34e}
-.hidden{display:none}
-.message{text-align:center;color:#ffd34e;margin-top:10px;min-height:20px;overflow-wrap:anywhere}
-.small-note{font-size:12px;color:#9da6bd;text-align:center;line-height:1.4}
-</style>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: #0b0e14;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 100vh;
+      padding: 20px 10px;
+      overflow: hidden;
+    }
+
+    /* Header & Balance */
+    .header {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #f3ba2f;
+      margin-bottom: 10px;
+    }
+
+    .balance-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .balance-container img {
+      width: 45px;
+      height: 45px;
+    }
+
+    .balance {
+      font-size: 40px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    /* Tap Area (Notcoin Style) */
+    .coin-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    .coin-btn {
+      width: 230px;
+      height: 230px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fcd535 0%, #f3ba2f 70%, #d99b00 100%);
+      box-shadow: 0 0 30px rgba(243, 186, 47, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.08s ease-in-out;
+      border: 8px solid #ffea79;
+    }
+
+    .coin-btn:active {
+      transform: scale(0.94);
+    }
+
+    .coin-inner {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: #f3ba2f;
+      border: 4px dashed #b88100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 70px;
+    }
+
+    /* Floating +1 Text Animation */
+    .tap-pop {
+      position: absolute;
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffffff;
+      pointer-events: none;
+      animation: floatUp 0.8s ease-out forwards;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-80px) scale(1.3); }
+    }
+
+    /* Energy Bar */
+    .energy-container {
+      width: 90%;
+      max-width: 350px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .energy-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #cccccc;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 14px;
+      background-color: #1e2329;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #333;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #f3ba2f, #ffea79);
+      transition: width 0.1s linear;
+      border-radius: 10px;
+    }
+
+    /* Status Message */
+    .status-msg {
+      font-size: 13px;
+      color: #ff4d4d;
+      margin-top: 5px;
+      min-height: 18px;
+    }
+  </style>
 </head>
-
 <body>
-<div class="container">
-
-<div class="header">
-<div class="logo">🚀</div>
-<div class="title">DropVerse</div>
-<div class="subtitle">Complete Tasks. Earn Points. Get Rewards.</div>
-</div>
-
-<div id="home">
-<div class="balance">
-<div class="balance-label">Your DVP Balance</div>
-<div class="balance-number">🪙 <span id="points">0</span></div>
-</div>
-
-<div class="coin" id="coin" role="button" aria-label="Tap coin">🪙</div>
-
-<div class="energy-box">
-⚡ Energy: <span id="energy">0</span>/<span id="maxEnergy">0</span>
-<div class="progress">
-<div class="progress-bar" id="energyBar"></div>
-</div>
-</div>
-
-<div class="message" id="message">Connecting to DropVerse…</div>
-<div class="small-note">Auto Coin is off. Tap the coin to earn DVP.</div>
-</div>
-
-<div id="tasks" class="section hidden">
-<h2>🎯 Tasks</h2>
-
-<div class="task">
-<span>📢 Join Telegram</span>
-<button onclick="unsupportedTask()">+100</button>
-</div>
-
-<div class="task">
-<span>📣 Follow Channel</span>
-<button onclick="unsupportedTask()">+150</button>
-</div>
-
-<div class="task">
-<span>🎮 Daily Check-in</span>
-<button onclick="completeDaily()">+50</button>
-</div>
-
-<div class="task">
-<span>🧠 Complete Quiz</span>
-<button onclick="unsupportedTask()">+200</button>
-</div>
-
-<p class="small-note">
-Only Daily Check-in is connected to the server.
-Other tasks cannot award points yet.
-</p>
-</div>
-
-<div id="referral" class="section hidden referral">
-<h2>👥 Invite Friends</h2>
-<p>Invite friends and earn referral points.</p>
-
-<div class="referral-code" id="referralCode">
-Referral link will appear here
-</div>
-
-<button class="action-button" onclick="copyReferral()">
-📋 Copy Referral Link
-</button>
-
-<h3>Referrals: <span id="referrals">0</span></h3>
-
-<p class="small-note">Referral rewards are not implemented yet.</p>
-</div>
-
-<div id="leaderboard" class="section hidden">
-<h2>🏆 Leaderboard</h2>
-<div id="leaderboardRows">
-<p class="small-note">Loading leaderboard…</p>
-</div>
-</div>
-
-<div id="rewards" class="section hidden">
-<h2>💰 Rewards</h2>
-<p>Your current balance:</p>
-<h1>🪙 <span id="rewardPoints">0</span> DVP</h1>
-
-<p style="color:#9da6bd">
-Rewards depend on the final campaign rules.
-</p>
-
-<button class="action-button"
-onclick="showMessage('Withdrawal is not available yet.')">
-💰 Withdrawal
-</button>
-</div>
-
-</div>
-
-<div class="bottom-nav">
-<button class="nav-btn active" onclick="showPage('home',this)">🏠<br>Home</button>
-<button class="nav-btn" onclick="showPage('tasks',this)">🎯<br>Tasks</button>
-<button class="nav-btn" onclick="showPage('referral',this)">👥<br>Refer</button>
-<button class="nav-btn" onclick="showPage('leaderboard',this)">🏆<br>Rank</button>
-<button class="nav-btn" onclick="showPage('rewards',this)">💰<br>Rewards</button>
-</div>
-
-<script>
-const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand();
-
-// এখানে তোমার Supabase Edge Function URL বসাবে।
-const API_URL = "https://uotdwlkodcmwpsbuimfb.supabase.co/functions/v1/dropverse-game";
 
-let profile = null;
-let busy = false;
-let touchBatch = [];
-let touchBatchTimer = null;
-
-function showMessage(text) {
- const msg = document.getElementById("message");
- msg.innerText = text;
-
- clearTimeout(showMessage.timer);
-
- showMessage.timer = setTimeout(() => {
-   msg.innerText = "";
- }, 2500);
-}
-
-function showPage(page, button) {
- ["home","tasks","referral","leaderboard","rewards"].forEach(p => {
-   document.getElementById(p).classList.toggle("hidden", p !== page);
- });
-
- document.querySelectorAll(".nav-btn").forEach(btn => {
-   btn.classList.remove("active");
- });
-
- button.classList.add("active");
-}
-
-function renderProfile(p) {
- if (!p) return;
-
- profile = p;
-
- const points = Number(p.dvp_points || 0);
- const energy = Number(p.energy || 0);
- const maxEnergy = Number(p.max_energy || 0);
-
- document.getElementById("points").innerText = points.toLocaleString();
- document.getElementById("energy").innerText = energy.toLocaleString();
- document.getElementById("maxEnergy").innerText = maxEnergy.toLocaleString();
-
- document.getElementById("energyBar").style.width =
-   (maxEnergy > 0 ? Math.min(100, energy / maxEnergy * 100) : 0) + "%";
-
- document.getElementById("referrals").innerText =
-   Number(p.referrals || 0);
-
- document.getElementById("rewardPoints").innerText =
-   points.toLocaleString();
-}
-
-async function api(action, extra = {}) {
- if (!tg.initData) {
-   throw new Error("Open this game from your Telegram bot to play.");
- }
-
- if (API_URL.includes("PASTE_YOUR_")) {
-   throw new Error("Setup needed: add your Supabase function URL in index.html.");
- }
-
- const response = await fetch(API_URL, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvdGR3bGtvZGNtd3BzYnVpbWZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0NzEyMjYsImV4cCI6MjEwNzA0NzIyNn0.-D4hANf8pH3_CB9ZsnyidqXgv8faIpsSYKYcQ4bC_3M"
-  },
-  body: JSON.stringify({
-    initData: tg.initData,
-    action,
-    ...extra
-  })
-});
-
- const data = await response.json().catch(() => ({}));
-
- if (!response.ok) {
-   throw new Error(data.error || "Server request failed.");
- }
-
- return data;
-}
-
-async function loadGame() {
- try {
-   const data = await api("init");
-
-   renderProfile(data.profile);
-   renderLeaderboard(data.leaderboard || []);
-
-   document.getElementById("referralCode").innerText =
-     "Referral link setup needed";
-
-   showMessage("Connected to DropVerse!");
-
- } catch (err) {
-   showMessage(err.message || "Could not connect.");
- }
-}
-
-function renderLeaderboard(rows) {
- const box = document.getElementById("leaderboardRows");
- box.innerHTML = "";
-
- if (!rows.length) {
-   box.innerHTML = '<p class="small-note">No leaderboard players yet.</p>';
-   return;
- }
-
- rows.forEach((p, i) => {
-   const row = document.createElement("div");
-   row.className = "task";
-
-   const left = document.createElement("span");
-   left.textContent =
-     `${i + 1}. ${p.username ? "@" + p.username : (p.first_name || "Player")}`;
-
-   const right = document.createElement("strong");
-   right.textContent =
-     `${Number(p.dvp_points || 0).toLocaleString()} DVP`;
-
-   row.append(left, right);
-   box.appendChild(row);
- });
-}
-
-async function sendTap(count) {
- if (busy) {
-   showMessage("Please wait…");
-   return;
- }
-
- if (!profile) {
-   showMessage("Game is not connected yet.");
-   return;
- }
-
- if (Number(profile.energy) < count) {
-   showMessage("⚡ Not enough Energy. Wait for recharge.");
-   return;
- }
-
- busy = true;
-
- try {
-   const data = await api("tap", {count});
-
-   renderProfile(data.profile);
-
-   showMessage("+" + Number(data.earned || count) + " DVP 🪙");
-
- } catch (err) {
-   showMessage(err.message || "Tap failed.");
-
-   if ((err.message || "").toLowerCase().includes("energy")) {
-     try {
-       const data = await api("state");
-       renderProfile(data.profile);
-     } catch (_) {}
-   }
-
- } finally {
-   busy = false;
- }
-}
-
-function queueTap(count) {
- touchBatch.push(count);
- clearTimeout(touchBatchTimer);
-
- touchBatchTimer = setTimeout(() => {
-   const total = Math.min(
-     5,
-     touchBatch.reduce((sum, n) => sum + n, 0)
-   );
-
-   touchBatch = [];
-
-   if (total > 0) sendTap(total);
-
- }, 65);
-}
-
-const coin = document.getElementById("coin");
-
-coin.addEventListener("pointerdown", event => {
- event.preventDefault();
- queueTap(1);
-});
-
-coin.addEventListener("contextmenu", event => {
- event.preventDefault();
-});
-
-async function completeDaily() {
- try {
-   const data = await api("claim_task", {taskId: "daily"});
-
-   renderProfile(data.profile);
-
-   showMessage("Daily check-in claimed! +50 DVP");
-
- } catch (err) {
-   showMessage(err.message || "Could not claim daily task.");
- }
-}
-
-function unsupportedTask() {
- showMessage("This task is not connected to server yet.");
-}
-
-async function copyReferral() {
- const link = document.getElementById("referralCode").innerText;
-
- try {
-   await navigator.clipboard.writeText(link);
-   showMessage("Referral link copied!");
-
- } catch (_) {
-   showMessage("Could not copy. Please copy the link manually.");
- }
-}
-
-loadGame();
-
-// প্রতি ৫ সেকেন্ডে সার্ভার থেকে Energy আপডেট হবে।
-setInterval(async () => {
- if (!profile || document.hidden) return;
-
- try {
-   const data = await api("state");
-   renderProfile(data.profile);
- } catch (_) {}
-
-}, 5000);
-</script>
-
+  <!-- Header Section -->
+  <div class="header">
+    <div class="title">🚀 DropVerse Airdrop</div>
+    <div class="balance-container">
+      <span style="font-size: 35px;">🪙</span>
+      <div class="balance" id="balance">0</div>
+    </div>
+  </div>
+
+  <!-- Notcoin Tap Button -->
+  <div class="coin-container">
+    <div class="coin-btn" id="coin">
+      <div class="coin-inner">🦅</div>
+    </div>
+  </div>
+
+  <!-- Energy Section -->
+  <div class="energy-container">
+    <div class="energy-info">
+      <span>⚡ Energy</span>
+      <span><span id="energy">1000</span> / <span id="max-energy">1000</span></span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="energy-bar"></div>
+    </div>
+    <div class="status-msg" id="status-msg"></div>
+  </div>
+
+  <script>
+    // 1. Telegram WebApp Initialization
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+
+    // API Endpoint
+    const API_URL = 'https://uotdwlkodcmwpsbuimfb.supabase.co/functions/v1/dropverse-game';
+
+    // Game Variables
+    let coins = 0;
+    let energy = 1000;
+    let maxEnergy = 1000;
+    let pendingTaps = 0;
+    let tapSyncTimer = null;
+
+    // DOM Elements
+    const balanceEl = document.getElementById('balance');
+    const energyEl = document.getElementById('energy');
+    const maxEnergyEl = document.getElementById('max-energy');
+    const energyBar = document.getElementById('energy-bar');
+    const coinBtn = document.getElementById('coin');
+    const statusMsg = document.getElementById('status-msg');
+
+    // 2. Initial Data Sync with Backend
+    async function initGame() {
+      const initData = tg?.initData || '';
+      const user = tg?.initDataUnsafe?.user;
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            initData: initData,
+            action: 'init',
+            telegram_id: user?.id
+          })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data) {
+          if (data.coins !== undefined) coins = data.coins;
+          if (data.energy !== undefined) energy = data.energy;
+          if (data.max_energy !== undefined) maxEnergy = data.max_energy;
+          updateUI();
+          statusMsg.innerText = '';
+        } else {
+          statusMsg.innerText = data.error || 'Server connection failed.';
+        }
+      } catch (err) {
+        console.error('Init Error:', err);
+        statusMsg.innerText = 'Connecting to server...';
+      }
+    }
+
+    // 3. Update User Interface
+    function updateUI() {
+      balanceEl.innerText = coins.toLocaleString();
+      energyEl.innerText = energy;
+      maxEnergyEl.innerText = maxEnergy;
+      const percentage = (energy / maxEnergy) * 100;
+      energyBar.style.width = percentage + '%';
+    }
+
+    // 4. Tap Event Handling (Optimistic Local Update)
+    coinBtn.addEventListener('pointerdown', (e) => {
+      if (energy <= 0) {
+        statusMsg.innerText = 'Energy finished! Wait for recharge.';
+        return;
+      }
+
+      // Instant UI update
+      coins += 1;
+      energy -= 1;
+      pendingTaps += 1;
+      updateUI();
+
+      // Show Floating +1 Text Animation
+      showTapAnimation(e.clientX, e.clientY);
+
+      // Debounced Sync to Backend (Send taps in batch)
+      clearTimeout(tapSyncTimer);
+      tapSyncTimer = setTimeout(syncTapsToBackend, 1000);
+    });
+
+    // 5. Send Tap Data to Supabase Backend
+    async function syncTapsToBackend() {
+      if (pendingTaps === 0) return;
+
+      const tapsToSend = pendingTaps;
+      pendingTaps = 0; // Reset count
+
+      const initData = tg?.initData || '';
+      const user = tg?.initDataUnsafe?.user;
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            initData: initData,
+            action: 'tap',
+            count: tapsToSend,
+            telegram_id: user?.id
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          console.error('Sync error:', data.error);
+          statusMsg.innerText = data.error || 'Failed to sync with server.';
+        } else {
+          statusMsg.innerText = '';
+        }
+      } catch (err) {
+        console.error('Network Error during sync:', err);
+      }
+    }
+
+    // 6. Floating Animation Helper
+    function showTapAnimation(x, y) {
+      const pop = document.createElement('div');
+      pop.className = 'tap-pop';
+      pop.innerText = '+1';
+      pop.style.left = (x - 15) + 'px';
+      pop.style.top = (y - 30) + 'px';
+      document.body.appendChild(pop);
+
+      setTimeout(() => {
+        pop.remove();
+      }, 800);
+    }
+
+    // Auto Energy Regeneration Every 2 Seconds
+    setInterval(() => {
+      if (energy < maxEnergy) {
+        energy = Math.min(maxEnergy, energy + 1);
+        updateUI();
+      }
+    }, 2000);
+
+    // Initialize Game on Load
+    initGame();
+  </script>
 </body>
 </html>
