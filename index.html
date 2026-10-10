@@ -1,54 +1,185 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>TaskDrop</title>
+    <title>Dropverse Point</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            background: #f2f5f9;
-            padding: 30px;
+        * {
+            box-sizing: border-box;
         }
 
-        .box {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            max-width: 400px;
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(160deg, #10152f, #25104a);
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 24px 16px;
+        }
+
+        .app {
+            max-width: 420px;
             margin: auto;
         }
 
-        button {
-            width: 100%;
-            padding: 14px;
-            margin: 8px 0;
-            border: none;
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            color: #b9a4ff;
+            margin: 15px 0;
+        }
+
+        .balance {
+            margin-top: 35px;
+            font-size: 17px;
+            color: #d0c7ff;
+        }
+
+        #points {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 12px 0 28px;
+        }
+
+        .coin {
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            border: 7px solid #d9c9ff;
+            background: radial-gradient(
+                circle at 35% 30%,
+                #ffffff,
+                #a78bfa 35%,
+                #6638d6 75%
+            );
+            box-shadow: 0 0 35px #8b5cf6;
+            color: #ffffff;
+            font-size: 34px;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.08s;
+        }
+
+        .coin:active {
+            transform: scale(0.94);
+        }
+
+        .energy {
+            margin: 30px 0 12px;
+            color: #fcd34d;
+        }
+
+        .bar {
+            height: 12px;
+            background: #35295a;
             border-radius: 10px;
-            font-size: 16px;
+            overflow: hidden;
+        }
+
+        #energyBar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24, #f97316);
+            transition: width 0.2s;
+        }
+
+        .notice {
+            color: #bdb7d8;
+            font-size: 12px;
+            margin-top: 30px;
         }
     </style>
 </head>
 
 <body>
+    <main class="app">
+        <div class="logo">💎 DRO PVERSE POINT</div>
 
-<div class="box">
+        <div class="balance">YOUR TOTAL POINTS</div>
 
-    <h1>🚀 TaskDrop</h1>
+        <div id="points">0 DVP</div>
 
-    <p>Complete Tasks. Earn Points. Get Rewards.</p>
+        <button
+            class="coin"
+            id="coin"
+            aria-label="Collect Dropverse points"
+        >
+            DVP
+        </button>
 
-    <h2>🪙 0 TDP</h2>
+        <div class="energy">
+            ⚡ Energy: <span id="energy">1000</span>/1000
+        </div>
 
-    <button>🎯 Tasks</button>
-    <button>👥 Refer Friends</button>
-    <button>🏆 Leaderboard</button>
-    <button>💰 Rewards</button>
+        <div class="bar">
+            <div id="energyBar"></div>
+        </div>
 
-</div>
+        <p class="notice">
+            Dropverse Point • Tap to Earn
+        </p>
+    </main>
 
+    <script>
+        const tg = window.Telegram?.WebApp;
+
+        tg?.ready();
+        tg?.expand();
+
+        let points = 0;
+        let energy = 1000;
+        const maxEnergy = 1000;
+
+        const pointsElement = document.getElementById("points");
+        const energyElement = document.getElementById("energy");
+        const energyBar = document.getElementById("energyBar");
+        const coin = document.getElementById("coin");
+
+        function render() {
+            pointsElement.textContent =
+                points.toLocaleString() + " DVP";
+
+            energyElement.textContent = energy;
+
+            energyBar.style.width =
+                (energy / maxEnergy * 100) + "%";
+        }
+
+        coin.addEventListener("click", async () => {
+            if (energy <= 0) {
+                alert("No energy! Please wait for recharge.");
+                return;
+            }
+
+            // Demo only: these values are not saved securely.
+            points += 1;
+            energy -= 1;
+
+            render();
+
+            if (tg?.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred("light");
+            }
+        });
+
+        setInterval(() => {
+            if (energy < maxEnergy) {
+                energy = Math.min(maxEnergy, energy + 1);
+                render();
+            }
+        }, 3000);
+
+        render();
+    </script>
 </body>
 </html>
