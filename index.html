@@ -2,924 +2,386 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <title>DropVerse</title>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
 <style>
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    background: #090d1b;
-    color: white;
-    font-family: Arial, sans-serif;
-    padding-bottom: 90px;
-}
-
-.container {
-    max-width: 480px;
-    margin: auto;
-    padding: 16px;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.logo {
-    font-size: 23px;
-    font-weight: bold;
-    color: #ffd84d;
-}
-
-.player-id {
-    font-size: 11px;
-    color: #aeb8d0;
-    margin-top: 5px;
-    overflow-wrap: anywhere;
-}
-
-.card {
-    background: #151d33;
-    padding: 16px;
-    border-radius: 18px;
-    margin-bottom: 16px;
-    border: 1px solid #263351;
-}
-
-.label {
-    color: #aeb8d0;
-    font-size: 12px;
-}
-
-.balance {
-    font-size: 34px;
-    font-weight: bold;
-    margin-top: 8px;
-}
-
-.gold {
-    color: #ffd84d;
-}
-
-.energy-heading {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    margin-bottom: 9px;
-}
-
-.energy-track {
-    width: 100%;
-    height: 12px;
-    background: #29344d;
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.energy-fill {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, #ffd84d, #ff9d32);
-    transition: width 0.2s;
-}
-
-.energy-info {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 9px;
-    font-size: 12px;
-    color: #aeb8d0;
-}
-
-.coin-area {
-    text-align: center;
-    padding: 20px 0 25px;
-}
-
-.coin {
-    width: 205px;
-    height: 205px;
-    border-radius: 50%;
-    margin: 12px auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 100px;
-    background: radial-gradient(circle at 35% 30%, #fff2a8, #ffc928 45%, #c9820c 80%);
-    border: 8px solid #ffe58b;
-    box-shadow: 0 0 35px #ffc92855, inset 0 0 20px #fff6bb;
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    transition: transform 0.08s;
-}
-
-.coin:active {
-    transform: scale(0.94);
-}
-
-.coin-text {
-    color: #aeb8d0;
-    font-size: 13px;
-    margin-top: 15px;
-}
-
-.section {
-    display: none;
-}
-
-.section.active {
-    display: block;
-}
-
-h2 {
-    font-size: 21px;
-    margin-top: 8px;
-}
-
-.small {
-    color: #aeb8d0;
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-button {
-    background: #ffd84d;
-    color: #151515;
-    border: none;
-    padding: 12px 14px;
-    border-radius: 11px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-button:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-}
-
-.full-button {
-    width: 100%;
-}
-
-.task-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    background: #151d33;
-    padding: 13px;
-    margin-bottom: 10px;
-    border-radius: 14px;
-}
-
-.task-title {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.task-reward {
-    font-size: 12px;
-    color: #ffd84d;
-    margin-top: 5px;
-}
-
-.daily-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
-
-.daily-card {
-    background: #151d33;
-    border: 1px solid #29344d;
-    padding: 13px 6px;
-    text-align: center;
-    border-radius: 13px;
-}
-
-.daily-card strong {
-    display: block;
-    color: #ffd84d;
-    margin: 10px 0;
-    font-size: 18px;
-}
-
-.daily-card button {
-    width: 100%;
-    padding: 9px 2px;
-    font-size: 11px;
-}
-
-.daily-card.claimed {
-    opacity: 0.5;
-}
-
-.nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #11182a;
-    border-top: 1px solid #28334c;
-    display: flex;
-    justify-content: space-around;
-    padding: 10px 3px;
-    z-index: 10;
-}
-
-.nav button {
-    background: transparent;
-    color: #aeb8d0;
-    font-size: 10px;
-    padding: 7px 4px;
-    flex: 1;
-}
-
-.nav button.active {
-    color: #ffd84d;
-}
-
-.nav span {
-    display: block;
-    font-size: 20px;
-    margin-bottom: 4px;
-}
-
-.message {
-    font-size: 13px;
-    color: #ffd84d;
-    margin-top: 12px;
-    overflow-wrap: anywhere;
-}
-
-.center {
-    text-align: center;
-}
-
-.leader-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 13px 5px;
-    border-bottom: 1px solid #29344d;
-    font-size: 13px;
-}
-
-.referral-link {
-    overflow-wrap: anywhere;
-    color: #ffd84d;
-    font-size: 12px;
-    margin: 12px 0;
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:white;touch-action:pan-y}
+.container{max-width:480px;margin:auto;min-height:100vh;padding:20px;padding-bottom:90px}
+.header{text-align:center;margin-bottom:20px}
+.logo{font-size:45px}
+.title{font-size:28px;font-weight:bold}
+.subtitle{color:#9da6bd;font-size:14px}
+.balance{background:#151c32;border-radius:20px;padding:22px;text-align:center;margin-bottom:18px}
+.balance-label{color:#9da6bd;font-size:14px}
+.balance-number{font-size:38px;font-weight:bold;margin-top:8px}
+.coin{margin:25px auto;width:190px;height:190px;border-radius:50%;background:linear-gradient(145deg,#ffd84d,#f0a900);display:flex;align-items:center;justify-content:center;font-size:75px;box-shadow:0 10px 40px rgba(255,193,7,.3);user-select:none;-webkit-user-select:none;touch-action:none;cursor:pointer;transition:transform .08s}
+.coin:active{transform:scale(.94)}
+.energy-box{text-align:center;color:#cbd2e5;margin-bottom:20px}
+.progress{height:9px;background:#252d44;border-radius:20px;overflow:hidden;margin-top:8px}
+.progress-bar{height:100%;width:100%;background:#ffd34e;transition:width .15s}
+.section{background:#151c32;padding:18px;border-radius:18px;margin-top:15px}
+.section h2{margin-top:0}
+.task{background:#202941;padding:14px;border-radius:13px;margin:10px 0;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.task button,.action-button{border:0;background:#ffd34e;color:#111;padding:9px 14px;border-radius:10px;font-weight:bold}
+.referral{text-align:center}
+.referral-code{background:#0d1426;padding:14px;border-radius:12px;margin:12px 0;word-break:break-all;color:#ffd34e}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:auto;background:#12192c;display:flex;justify-content:space-around;padding:12px 5px;border-top:1px solid #28314a}
+.nav-btn{background:none;border:none;color:#aab3c9;font-size:12px}
+.nav-btn.active{color:#ffd34e}
+.hidden{display:none}
+.message{text-align:center;color:#ffd34e;margin-top:10px;min-height:20px;overflow-wrap:anywhere}
+.small-note{font-size:12px;color:#9da6bd;text-align:center;line-height:1.4}
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
-    <header class="header">
-        <div>
-            <div class="logo">🚀 DropVerse</div>
-            <div class="player-id">
-                PLAYER ID: <span id="playerId">Connecting...</span>
-            </div>
-        </div>
+<div class="header">
+<div class="logo">🚀</div>
+<div class="title">DropVerse</div>
+<div class="subtitle">Complete Tasks. Earn Points. Get Rewards.</div>
+</div>
 
-        <div class="gold">🪙 DVP</div>
-    </header>
+<div id="home">
+<div class="balance">
+<div class="balance-label">Your DVP Balance</div>
+<div class="balance-number">🪙 <span id="points">0</span></div>
+</div>
 
-    <!-- HOME -->
-    <section id="home" class="section active">
+<div class="coin" id="coin" role="button" aria-label="Tap coin">🪙</div>
 
-        <div class="card">
-            <div class="label">YOUR TOTAL BALANCE</div>
-            <div class="balance">
-                🪙 <span id="balance">0</span>
-            </div>
-            <div class="small">
-                Level <span id="level">1</span> / 10
-            </div>
-        </div>
+<div class="energy-box">
+⚡ Energy: <span id="energy">0</span>/<span id="maxEnergy">0</span>
+<div class="progress">
+<div class="progress-bar" id="energyBar"></div>
+</div>
+</div>
 
-        <div class="card">
+<div class="message" id="message">Connecting to DropVerse…</div>
+<div class="small-note">Auto Coin is off. Tap the coin to earn DVP.</div>
+</div>
 
-            <div class="energy-heading">
-                <span>⚡ Energy</span>
-                <span id="energyNumbers">200 / 200</span>
-            </div>
+<div id="tasks" class="section hidden">
+<h2>🎯 Tasks</h2>
 
-            <div class="energy-track">
-                <div class="energy-fill" id="energyFill"></div>
-            </div>
+<div class="task">
+<span>📢 Join Telegram</span>
+<button onclick="unsupportedTask()">+100</button>
+</div>
 
-            <div class="energy-info">
-                <span>Recharge time</span>
-                <span id="energyTimer">--:--:--</span>
-            </div>
+<div class="task">
+<span>📣 Follow Channel</span>
+<button onclick="unsupportedTask()">+150</button>
+</div>
 
-        </div>
+<div class="task">
+<span>🎮 Daily Check-in</span>
+<button onclick="completeDaily()">+50</button>
+</div>
 
-        <div class="coin-area">
-            <div class="coin" id="tapCoin" role="button"
-                 aria-label="Tap coin">🪙</div>
+<div class="task">
+<span>🧠 Complete Quiz</span>
+<button onclick="unsupportedTask()">+200</button>
+</div>
 
-            <div class="coin-text">
-                TAP THE COIN TO EARN DVP
-            </div>
+<p class="small-note">
+Only Daily Check-in is connected to the server.
+Other tasks cannot award points yet.
+</p>
+</div>
 
-            <p class="message" id="homeMessage"></p>
-        </div>
+<div id="referral" class="section hidden referral">
+<h2>👥 Invite Friends</h2>
+<p>Invite friends and earn referral points.</p>
 
-    </section>
+<div class="referral-code" id="referralCode">
+Referral link will appear here
+</div>
 
-    <!-- TASKS AND DAILY REWARDS -->
-    <section id="tasks" class="section">
+<button class="action-button" onclick="copyReferral()">
+📋 Copy Referral Link
+</button>
 
-        <h2>🎁 Daily Rewards</h2>
-        <p class="small">Claim your reward once per day.</p>
+<h3>Referrals: <span id="referrals">0</span></h3>
 
-        <div class="daily-grid" id="dailyGrid"></div>
+<p class="small-note">Referral rewards are not implemented yet.</p>
+</div>
 
-        <p class="message" id="dailyMessage"></p>
+<div id="leaderboard" class="section hidden">
+<h2>🏆 Leaderboard</h2>
+<div id="leaderboardRows">
+<p class="small-note">Loading leaderboard…</p>
+</div>
+</div>
 
-        <h2 style="margin-top:30px">📋 Tasks</h2>
+<div id="rewards" class="section hidden">
+<h2>💰 Rewards</h2>
+<p>Your current balance:</p>
+<h1>🪙 <span id="rewardPoints">0</span> DVP</h1>
 
-        <div class="task-row">
-            <div>
-                <div class="task-title">Join Telegram Channel</div>
-                <div class="task-reward">+50 DVP</div>
-            </div>
-            <button id="channelButton">Check</button>
-        </div>
+<p style="color:#9da6bd">
+Rewards depend on the final campaign rules.
+</p>
 
-        <p class="small">
-            Channel rewards work after the server is configured
-            to verify your membership.
-        </p>
-
-        <p class="message" id="taskMessage"></p>
-
-    </section>
-
-    <!-- REFERRAL -->
-    <section id="referral" class="section">
-
-        <h2>👥 Invite Friends</h2>
-
-        <div class="card">
-            <div class="label">TOTAL REFERRALS</div>
-            <div class="balance" id="referrals">0</div>
-
-            <p class="small">
-                Invite friends using your personal Telegram link.
-            </p>
-
-            <div class="referral-link" id="referralLink">
-                Loading referral link...
-            </div>
-
-            <button class="full-button" id="shareButton">
-                Share Invitation
-            </button>
-
-            <p class="small">
-                Referral bonuses require server-side invitation
-                tracking to be enabled.
-            </p>
-        </div>
-
-        <p class="message" id="referralMessage"></p>
-
-    </section>
-
-    <!-- LEADERBOARD -->
-    <section id="leaderboard" class="section">
-
-        <h2>🏆 Leaderboard</h2>
-
-        <div class="card" id="leaderboardList">
-            <p class="small">Loading leaderboard...</p>
-        </div>
-
-        <button class="full-button" id="refreshLeaderboard">
-            Refresh
-        </button>
-
-        <p class="message" id="leaderboardMessage"></p>
-
-    </section>
-
-    <!-- PROFILE -->
-    <section id="profile" class="section">
-
-        <h2>👤 Player Profile</h2>
-
-        <div class="card">
-            <p>Player ID: <span id="profileId">-</span></p>
-            <p>Level: <span id="profileLevel">1</span></p>
-            <p>Total DVP: <span id="profileBalance">0</span></p>
-            <p>Energy: <span id="profileEnergy">0</span></p>
-            <p>Referrals: <span id="profileReferrals">0</span></p>
-
-            <button class="full-button" id="refreshButton">
-                Refresh Profile
-            </button>
-        </div>
-
-        <p class="message" id="profileMessage"></p>
-
-    </section>
+<button class="action-button"
+onclick="showMessage('Withdrawal is not available yet.')">
+💰 Withdrawal
+</button>
+</div>
 
 </div>
 
-<!-- BOTTOM NAVIGATION -->
-<nav class="nav">
-
-    <button class="active" data-page="home">
-        <span>🏠</span>Home
-    </button>
-
-    <button data-page="tasks">
-        <span>🎁</span>Tasks
-    </button>
-
-    <button data-page="referral">
-        <span>👥</span>Friends
-    </button>
-
-    <button data-page="leaderboard">
-        <span>🏆</span>Leaders
-    </button>
-
-    <button data-page="profile">
-        <span>👤</span>Profile
-    </button>
-
-</nav>
+<div class="bottom-nav">
+<button class="nav-btn active" onclick="showPage('home',this)">🏠<br>Home</button>
+<button class="nav-btn" onclick="showPage('tasks',this)">🎯<br>Tasks</button>
+<button class="nav-btn" onclick="showPage('referral',this)">👥<br>Refer</button>
+<button class="nav-btn" onclick="showPage('leaderboard',this)">🏆<br>Rank</button>
+<button class="nav-btn" onclick="showPage('rewards',this)">💰<br>Rewards</button>
+</div>
 
 <script>
-"use strict";
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
 
-/*
-  IMPORTANT:
-  Replace this URL only if your Supabase project URL changes.
-*/
-const API_URL =
-"https://uotdwlkodcmwpsbuimfb.supabase.co/functions/v1/dropverse-game";
-
-/*
-  Replace with your Telegram bot username, without @.
-  Example: "MyDropVerseBot"
-*/
-const BOT_USERNAME = "Dropverse1bot";
-
-const tg = window.Telegram?.WebApp;
-
-if (tg) {
-    tg.ready();
-    tg.expand();
-}
+// এখানে তোমার Supabase Edge Function URL বসাবে।
+const API_URL = "PASTE_YOUR_SUPABASE_DROPVERSE_GAME_FUNCTION_URL_HERE";
 
 let profile = null;
 let busy = false;
-let serverConnected = false;
+let touchBatch = [];
+let touchBatchTimer = null;
 
-const dailyRewards = [1, 3, 6, 9, 12, 15, 18];
+function showMessage(text) {
+ const msg = document.getElementById("message");
+ msg.innerText = text;
 
-function numberFormat(value) {
-    return Number(value || 0).toLocaleString("en-US");
+ clearTimeout(showMessage.timer);
+
+ showMessage.timer = setTimeout(() => {
+   msg.innerText = "";
+ }, 2500);
 }
 
-function showMessage(id, text) {
-    const element = document.getElementById(id);
-    if (element) element.textContent = text;
-}
+function showPage(page, button) {
+ ["home","tasks","referral","leaderboard","rewards"].forEach(p => {
+   document.getElementById(p).classList.toggle("hidden", p !== page);
+ });
 
-async function api(action, extra = {}) {
+ document.querySelectorAll(".nav-btn").forEach(btn => {
+   btn.classList.remove("active");
+ });
 
-    if (!tg || !tg.initData) {
-        throw new Error(
-            "Open DropVerse from your Telegram bot to play."
-        );
-    }
-
-    const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            initData: tg.initData,
-            action,
-            ...extra
-        })
-    });
-
-    let data;
-
-    try {
-        data = await response.json();
-    } catch {
-        throw new Error("Invalid server response.");
-    }
-
-    if (!response.ok || data.error) {
-        throw new Error(data.error || "Server request failed.");
-    }
-
-    return data;
+ button.classList.add("active");
 }
 
 function renderProfile(p) {
+ if (!p) return;
 
-    profile = p;
+ profile = p;
 
-    document.getElementById("playerId").textContent =
-        p.telegram_id ?? "Not connected";
+ const points = Number(p.dvp_points || 0);
+ const energy = Number(p.energy || 0);
+ const maxEnergy = Number(p.max_energy || 0);
 
-    document.getElementById("profileId").textContent =
-        p.telegram_id ?? "-";
+ document.getElementById("points").innerText = points.toLocaleString();
+ document.getElementById("energy").innerText = energy.toLocaleString();
+ document.getElementById("maxEnergy").innerText = maxEnergy.toLocaleString();
 
-    document.getElementById("balance").textContent =
-        numberFormat(p.dvp_points);
+ document.getElementById("energyBar").style.width =
+   (maxEnergy > 0 ? Math.min(100, energy / maxEnergy * 100) : 0) + "%";
 
-    document.getElementById("level").textContent =
-        p.level ?? 1;
+ document.getElementById("referrals").innerText =
+   Number(p.referrals || 0);
 
-    document.getElementById("profileLevel").textContent =
-        p.level ?? 1;
-
-    document.getElementById("profileBalance").textContent =
-        numberFormat(p.dvp_points);
-
-    document.getElementById("energyNumbers").textContent =
-        `${p.energy} / ${p.max_energy}`;
-
-    document.getElementById("profileEnergy").textContent =
-        `${p.energy} / ${p.max_energy}`;
-
-    document.getElementById("referrals").textContent =
-        numberFormat(p.referral_count);
-
-    document.getElementById("profileReferrals").textContent =
-        numberFormat(p.referral_count);
-
-    const percentage = p.max_energy > 0
-        ? (p.energy / p.max_energy) * 100
-        : 0;
-
-    document.getElementById("energyFill").style.width =
-        Math.max(0, Math.min(100, percentage)) + "%";
-
-    renderDailyRewards(p);
-    renderEnergyTimer(p);
-    serverConnected = true;
+ document.getElementById("rewardPoints").innerText =
+   points.toLocaleString();
 }
 
-function renderDailyRewards(p) {
+async function api(action, extra = {}) {
+ if (!tg.initData) {
+   throw new Error("Open this game from your Telegram bot to play.");
+ }
 
-    const grid = document.getElementById("dailyGrid");
-    grid.innerHTML = "";
+ if (API_URL.includes("PASTE_YOUR_")) {
+   throw new Error("Setup needed: add your Supabase function URL in index.html.");
+ }
 
-    const streak = Number(p.daily_streak || 0);
-    const claimedToday = Boolean(p.claimed_today);
+ const response = await fetch(API_URL, {
+   method: "POST",
+   headers: {"Content-Type": "application/json"},
+   body: JSON.stringify({
+     initData: tg.initData,
+     action,
+     ...extra
+   })
+ });
 
-    dailyRewards.forEach((reward, index) => {
+ const data = await response.json().catch(() => ({}));
 
-        const day = index + 1;
+ if (!response.ok) {
+   throw new Error(data.error || "Server request failed.");
+ }
 
-        const card = document.createElement("div");
-        card.className = "daily-card";
-
-        const title = document.createElement("div");
-        title.textContent = "Day " + day;
-
-        const points = document.createElement("strong");
-        points.textContent = "🪙 " + reward;
-
-        const button = document.createElement("button");
-
-        const alreadyClaimed =
-            claimedToday && day === streak;
-
-        if (alreadyClaimed) {
-            button.textContent = "Claimed";
-            button.disabled = true;
-            card.classList.add("claimed");
-        } else if (day <= streak) {
-            button.textContent = "Completed";
-            button.disabled = true;
-            card.classList.add("claimed");
-        } else if (day === streak + 1) {
-            button.textContent = claimedToday
-                ? "Claimed"
-                : "Claim";
-            button.disabled = claimedToday;
-        } else {
-            button.textContent = "Locked";
-            button.disabled = true;
-        }
-
-        button.addEventListener("click", async () => {
-
-            button.disabled = true;
-
-            try {
-                const result = await api("claim_daily");
-                renderProfile(result.profile);
-
-                showMessage(
-                    "dailyMessage",
-                    result.message || "Reward claimed!"
-                );
-
-            } catch (error) {
-
-                showMessage("dailyMessage", error.message);
-                button.disabled = false;
-            }
-        });
-
-        card.append(title, points, button);
-        grid.appendChild(card);
-    });
-}
-
-function renderEnergyTimer(p) {
-
-    const timer = document.getElementById("energyTimer");
-
-    if (Number(p.energy) >= Number(p.max_energy)) {
-        timer.textContent = "FULL";
-        return;
-    }
-
-    /*
-      The backend returns seconds until full energy.
-    */
-    let remaining = Math.max(
-        0,
-        Number(p.seconds_to_full || 0)
-    );
-
-    function update() {
-
-        if (remaining <= 0) {
-            timer.textContent = "Refreshing...";
-            return;
-        }
-
-        const hours = Math.floor(remaining / 3600);
-        const minutes = Math.floor((remaining % 3600) / 60);
-        const seconds = remaining % 60;
-
-        timer.textContent =
-            String(hours).padStart(2, "0") + ":" +
-            String(minutes).padStart(2, "0") + ":" +
-            String(seconds).padStart(2, "0");
-
-        remaining--;
-    }
-
-    update();
-
-    if (timer._interval) {
-        clearInterval(timer._interval);
-    }
-
-    timer._interval = setInterval(update, 1000);
+ return data;
 }
 
 async function loadGame() {
+ try {
+   const data = await api("init");
 
-    try {
+   renderProfile(data.profile);
+   renderLeaderboard(data.leaderboard || []);
 
-        showMessage("homeMessage", "Connecting to server...");
+   document.getElementById("referralCode").innerText =
+     "Referral link setup needed";
 
-        const data = await api("init");
+   showMessage("Connected to DropVerse!");
 
-        renderProfile(data.profile);
-
-        showMessage("homeMessage", "");
-
-        await loadLeaderboard();
-
-    } catch (error) {
-
-        serverConnected = false;
-
-        showMessage("homeMessage", error.message);
-        showMessage("profileMessage", error.message);
-    }
+ } catch (err) {
+   showMessage(err.message || "Could not connect.");
+ }
 }
 
-document.getElementById("tapCoin").addEventListener(
-    "click",
-    async () => {
+function renderLeaderboard(rows) {
+ const box = document.getElementById("leaderboardRows");
+ box.innerHTML = "";
 
-        if (busy) return;
+ if (!rows.length) {
+   box.innerHTML = '<p class="small-note">No leaderboard players yet.</p>';
+   return;
+ }
 
-        if (!serverConnected) {
-            showMessage(
-                "homeMessage",
-                "Game is not connected. Open it through Telegram."
-            );
-            return;
-        }
+ rows.forEach((p, i) => {
+   const row = document.createElement("div");
+   row.className = "task";
 
-        if (!profile || Number(profile.energy) <= 0) {
-            showMessage(
-                "homeMessage",
-                "No energy left. Wait for recharge."
-            );
-            return;
-        }
+   const left = document.createElement("span");
+   left.textContent =
+     `${i + 1}. ${p.username ? "@" + p.username : (p.first_name || "Player")}`;
 
-        busy = true;
+   const right = document.createElement("strong");
+   right.textContent =
+     `${Number(p.dvp_points || 0).toLocaleString()} DVP`;
 
-        try {
-
-            const data = await api("tap", { count: 1 });
-
-            renderProfile(data.profile);
-
-            if (tg?.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred("light");
-            }
-
-            showMessage("homeMessage", "+1 DVP");
-
-        } catch (error) {
-
-            showMessage("homeMessage", error.message);
-
-        } finally {
-            busy = false;
-        }
-    }
-);
-
-document.getElementById("channelButton").addEventListener(
-    "click",
-    async () => {
-
-        const button = document.getElementById("channelButton");
-        button.disabled = true;
-
-        try {
-
-            const data = await api("claim_task", {
-                task_id: "channel"
-            });
-
-            renderProfile(data.profile);
-
-            showMessage(
-                "taskMessage",
-                data.message || "Task completed!"
-            );
-
-        } catch (error) {
-
-            showMessage("taskMessage", error.message);
-
-        } finally {
-            button.disabled = false;
-        }
-    }
-);
-
-document.getElementById("shareButton").addEventListener(
-    "click",
-    async () => {
-
-        if (BOT_USERNAME === "YOUR_BOT_USERNAME") {
-            showMessage(
-                "referralMessage",
-                "Set your bot username in the HTML first."
-            );
-            return;
-        }
-
-        if (!profile) return;
-
-        const link =
-            "https://t.me/" + BOT_USERNAME +
-            "?start=" + profile.telegram_id;
-
-        const shareUrl =
-            "https://t.me/share/url?url=" +
-            encodeURIComponent(link) +
-            "&text=" +
-            encodeURIComponent("Join DropVerse!");
-
-        if (tg?.openTelegramLink) {
-            tg.openTelegramLink(shareUrl);
-        } else {
-            window.open(shareUrl, "_blank");
-        }
-    }
-);
-
-async function loadLeaderboard() {
-
-    const box = document.getElementById("leaderboardList");
-
-    box.innerHTML = "<p class='small'>Loading...</p>";
-
-    try {
-
-        const data = await api("leaderboard");
-
-        box.innerHTML = "";
-
-        if (!data.players || data.players.length === 0) {
-            box.textContent = "No players yet.";
-            return;
-        }
-
-        data.players.forEach((player, index) => {
-
-            const row = document.createElement("div");
-            row.className = "leader-row";
-
-            const name = document.createElement("span");
-            name.textContent =
-                (index + 1) + ". " +
-                (player.username || ("Player " + player.telegram_id));
-
-            const score = document.createElement("strong");
-            score.textContent =
-                numberFormat(player.dvp_points) + " DVP";
-
-            row.append(name, score);
-            box.appendChild(row);
-        });
-
-    } catch (error) {
-
-        box.textContent = error.message;
-    }
+   row.append(left, right);
+   box.appendChild(row);
+ });
 }
 
-document.getElementById("refreshLeaderboard").addEventListener(
-    "click",
-    loadLeaderboard
-);
+async function sendTap(count) {
+ if (busy) {
+   showMessage("Please wait…");
+   return;
+ }
 
-document.getElementById("refreshButton").addEventListener(
-    "click",
-    async () => {
+ if (!profile) {
+   showMessage("Game is not connected yet.");
+   return;
+ }
 
-        try {
+ if (Number(profile.energy) < count) {
+   showMessage("⚡ Not enough Energy. Wait for recharge.");
+   return;
+ }
 
-            const data = await api("state");
-            renderProfile(data.profile);
+ busy = true;
 
-            showMessage("profileMessage", "Profile updated.");
+ try {
+   const data = await api("tap", {count});
 
-        } catch (error) {
+   renderProfile(data.profile);
 
-            showMessage("profileMessage", error.message);
-        }
-    }
-);
+   showMessage("+" + Number(data.earned || count) + " DVP 🪙");
 
-document.querySelectorAll(".nav button").forEach(button => {
+ } catch (err) {
+   showMessage(err.message || "Tap failed.");
 
-    button.addEventListener("click", () => {
+   if ((err.message || "").toLowerCase().includes("energy")) {
+     try {
+       const data = await api("state");
+       renderProfile(data.profile);
+     } catch (_) {}
+   }
 
-        document.querySelectorAll(".nav button").forEach(b => {
-            b.classList.remove("active");
-        });
+ } finally {
+   busy = false;
+ }
+}
 
-        button.classList.add("active");
+function queueTap(count) {
+ touchBatch.push(count);
+ clearTimeout(touchBatchTimer);
 
-        document.querySelectorAll(".section").forEach(section => {
-            section.classList.remove("active");
-        });
+ touchBatchTimer = setTimeout(() => {
+   const total = Math.min(
+     5,
+     touchBatch.reduce((sum, n) => sum + n, 0)
+   );
 
-        const page = document.getElementById(button.dataset.page);
+   touchBatch = [];
 
-        if (page) page.classList.add("active");
+   if (total > 0) sendTap(total);
 
-        if (button.dataset.page === "leaderboard") {
-            loadLeaderboard();
-        }
-    });
+ }, 65);
+}
+
+const coin = document.getElementById("coin");
+
+coin.addEventListener("pointerdown", event => {
+ event.preventDefault();
+ queueTap(1);
 });
 
+coin.addEventListener("contextmenu", event => {
+ event.preventDefault();
+});
+
+async function completeDaily() {
+ try {
+   const data = await api("claim_task", {taskId: "daily"});
+
+   renderProfile(data.profile);
+
+   showMessage("Daily check-in claimed! +50 DVP");
+
+ } catch (err) {
+   showMessage(err.message || "Could not claim daily task.");
+ }
+}
+
+function unsupportedTask() {
+ showMessage("This task is not connected to server yet.");
+}
+
+async function copyReferral() {
+ const link = document.getElementById("referralCode").innerText;
+
+ try {
+   await navigator.clipboard.writeText(link);
+   showMessage("Referral link copied!");
+
+ } catch (_) {
+   showMessage("Could not copy. Please copy the link manually.");
+ }
+}
+
 loadGame();
+
+// প্রতি ৫ সেকেন্ডে সার্ভার থেকে Energy আপডেট হবে।
+setInterval(async () => {
+ if (!profile || document.hidden) return;
+
+ try {
+   const data = await api("state");
+   renderProfile(data.profile);
+ } catch (_) {}
+
+}, 5000);
 </script>
 
 </body>
