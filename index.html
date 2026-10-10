@@ -199,3 +199,168 @@ footer {
     color: #9ca3af;
     font-size: 12px;
 }
+const tg = window.Telegram?.WebApp;
+
+tg?.ready();
+tg?.expand();
+
+const tapButton = document.getElementById("tapButton");
+const balanceElement = document.getElementById("balance");
+const energyText = document.getElementById("energyText");
+const energyBar = document.getElementById("energyBar");
+const usernameElement = document.getElementById("username");
+const extraContent = document.getElementById("extraContent");
+
+const state = {
+    points: 0,
+    energy: 1000,
+    maxEnergy: 1000,
+    busy: false
+};
+
+// Configure these through your deployment environment.
+// Never put a Supabase service-role key in frontend code.
+const SUPABASE_URL = "";
+const SUPABASE_ANON_KEY = "";
+
+function render() {
+    balanceElement.textContent =
+        state.points.toLocaleString() + " DVP";
+
+    energyText.textContent =
+        `${state.energy} / ${state.maxEnergy}`;
+
+    energyBar.style.width =
+        `${(state.energy / state.maxEnergy) * 100}%`;
+}
+
+function showMessage(message) {
+    tg?.showAlert?.(message);
+
+    if (!tg?.showAlert) {
+        alert(message);
+    }
+}
+
+function getTelegramUser() {
+    return tg?.initDataUnsafe?.user ?? null;
+}
+
+function initialize() {
+    const user = getTelegramUser();
+
+    if (user) {
+        usernameElement.textContent =
+            user.first_name || "Telegram User";
+    } else {
+        usernameElement.textContent =
+            "Preview Mode — Open inside Telegram";
+    }
+
+    render();
+}
+
+async function apiRequest(endpoint, body = {}) {
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        throw new Error("Backend is not configured yet.");
+    }
+
+    if (!tg?.initData) {
+        throw new Error("Open the app inside Telegram.");
+    }
+
+    const response = await fetch(
+        `${SUPABASE_URL}/functions/v1/${endpoint}`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+            },
+            body: JSON.stringify({
+                initData: tg.initData,
+                ...body
+            })
+        }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.error || "Request failed.");
+    }
+
+    return result;
+}
+
+tapButton.addEventListener("click", async () => {
+    if (state.busy) return;
+
+    state.busy = true;
+    tapButton.disabled = true;
+
+    try {
+        const result = await apiRequest("tap", {
+            taps: 1
+        });
+
+        state.points = result.points;
+        state.energy = result.energy;
+
+        render();
+
+        tg?.HapticFeedback?.impactOccurred("light");
+    } catch (error) {
+        showMessage(error.message);
+    } finally {
+        state.busy = false;
+        tapButton.disabled = false;
+    }
+});
+
+document.querySelectorAll("[data-page]").forEach(button => {
+    button.addEventListener("click", async () => {
+        const page = button.dataset.page;
+
+        if (page === "home") {
+            extraContent.textContent = "Welcome to Dropverse Point!";
+            return;
+        }
+
+        if (page === "tasks") {
+            extraContent.textContent =
+                "Tasks will appear here after backend setup.";
+        }
+
+        if (page === "friends") {
+            extraContent.textContent =
+                "Referral features will appear here after setup.";
+        }
+
+        if (page === "rank") {
+            try {
+                const result = await apiRequest("leaderboard");
+
+                extraContent.replaceChildren();
+
+                const title = document.createElement("h3");
+                title.textContent = "🏆 Leaderboard";
+                extraContent.appendChild(title);
+
+                for (const player of result.players || []) {
+                    const row = document.createElement("p");
+                    row.textContent =
+                        `${player.rank}. ${player.username}: ` +
+                        `${Number(player.points).toLocaleString()} DVP`;
+
+                    extraContent.appendChild(row);
+                }
+            } catch (error) {
+                showMessage(error.message);
+            }
+        }
+    });
+});
+
+ initialize();
