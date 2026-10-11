@@ -190,8 +190,17 @@ async function loadProfile(showMessage = false) {
 
   player = p;
   points = Number(p.points) || 0;
-  energy = Number(p.energy) || 0;
   maxEnergy = Number(p.max_energy) || MAX_ENERGY_DEFAULT;
+
+  energyBase = Math.max(0, Number(p.energy) || 0);
+
+  const lastUpdate = Date.parse(p.last_energy_update);
+  energyBaseAt = Number.isFinite(lastUpdate)
+    ? lastUpdate
+    : Date.now();
+
+  localTapOffset = 0;
+  energy = currentEnergy();
 
   $("username").textContent =
     p.username || tg?.initDataUnsafe?.user?.first_name || "Player";
@@ -246,7 +255,8 @@ $("coin").addEventListener("click", () => {
     return;
   }
 
-  energy = Math.max(0, energy - 1);
+  localTapOffset += 1;
+energy = currentEnergy();
   pendingTaps += 1;
   render();
   message("Saving your taps...");
