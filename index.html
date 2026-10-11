@@ -122,12 +122,15 @@ function refreshEnergyDisplay() {
 
 setInterval(refreshEnergyDisplay, 1000);
 
+
 function render() {
   $("points").textContent = Number(points).toLocaleString();
   $("energy").textContent = Math.max(0, Math.floor(energy));
   $("maxEnergy").textContent = maxEnergy;
+
   $("energyBar").style.width =
     Math.max(0, Math.min(100, energy / maxEnergy * 100)) + "%";
+
   $("coin").disabled = !isReady || energy <= 0;
 }
 
