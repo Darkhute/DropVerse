@@ -88,49 +88,27 @@ const SUPABASE_KEY = "sb_publishable_x7a_qp-lzeHsisq8XDv08g_Kunzq169";
 const MAX_ENERGY_DEFAULT = 1000;
 const $ = id => document.getElementById(id);
 
-
 let points = 0;
 let energy = 0;
 let maxEnergy = MAX_ENERGY_DEFAULT;
-
-let energyBase = 0;
-let energyBaseAt = Date.now();
-let localTapOffset = 0;
-
 let player = null;
 let busy = false;
 let pendingTaps = 0;
 let tapTimer = null;
 let isReady = false;
 
-function currentEnergy() {
-  const elapsed = Math.max(0, Date.now() - energyBaseAt);
-  const regen = Math.floor(elapsed / 3000);
+const initData = tg?.initData || "";
 
-  return Math.max(
-    0,
-    Math.min(maxEnergy, energyBase + regen) - localTapOffset
-  );
+function message(text) {
+  $("message").textContent = text;
 }
-
-function refreshEnergyDisplay() {
-  if (!isReady) return;
-
-  energy = currentEnergy();
-  render();
-}
-
-setInterval(refreshEnergyDisplay, 1000);
-
 
 function render() {
   $("points").textContent = Number(points).toLocaleString();
   $("energy").textContent = Math.max(0, Math.floor(energy));
   $("maxEnergy").textContent = maxEnergy;
-
   $("energyBar").style.width =
     Math.max(0, Math.min(100, energy / maxEnergy * 100)) + "%";
-
   $("coin").disabled = !isReady || energy <= 0;
 }
 
@@ -205,7 +183,6 @@ async function api(action, extra = {}) {
 async function loadProfile(showMessage = false) {
   const result = await api("profile");
   const p = findPlayerObject(result);
- console.log("Energy profile:", p);
 
   if (!p) {
     throw new Error("Profile data was not found in the API response.");
@@ -213,17 +190,8 @@ async function loadProfile(showMessage = false) {
 
   player = p;
   points = Number(p.points) || 0;
+  energy = Number(p.energy) || 0;
   maxEnergy = Number(p.max_energy) || MAX_ENERGY_DEFAULT;
-
-  energyBase = Math.max(0, Number(p.energy) || 0);
-
-  const lastUpdate = Date.parse(p.last_energy_update ||"");
-  energyBaseAt = Number.isFinite(lastUpdate)
-    ? lastUpdate
-    : Date.now();
-
-  localTapOffset = 0;
-  energy = currentEnergy();
 
   $("username").textContent =
     p.username || tg?.initDataUnsafe?.user?.first_name || "Player";
@@ -278,8 +246,7 @@ $("coin").addEventListener("click", () => {
     return;
   }
 
-  localTapOffset += 1;
-energy = currentEnergy();
+  energy = Math.max(0, energy - 1);
   pendingTaps += 1;
   render();
   message("Saving your taps...");
@@ -404,14 +371,10 @@ async function startApp() {
     $("content").innerHTML =
       "<h3>Welcome to Dropverse Point!</h3><p class='small'>Your account is connected to the server.</p>";
   } catch (error) {
-  isReady = false;
-  render();
-  console.error("Dropverse startup error:", error);
-  message(
-    "⚠️ " + (error?.message || String(error))
-  );
-}
-
+    isReady = false;
+    render();
+    message("⚠️ " + error.message);
+  }
 }
 
 startApp();
