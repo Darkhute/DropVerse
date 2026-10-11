@@ -124,7 +124,15 @@ const initData = tg?.initData || "";
 function message(text) {
   $("message").textContent = text;
 }
+function currentEnergy() {
+  const elapsed = Math.max(0, Date.now() - energyBaseAt);
+  const regen = Math.floor(elapsed / 3000);
 
+  return Math.max(
+    0,
+    Math.min(maxEnergy, energyBase + regen) - localTapOffset
+  );
+}
 function render() {function refreshEnergyDisplay() {
   if (!isReady) return;
 
