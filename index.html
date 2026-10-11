@@ -91,6 +91,28 @@ const $ = id => document.getElementById(id);
 let points = 0;
 let energy = 0;
 let maxEnergy = MAX_ENERGY_DEFAULT;
+ let energyBase = 0;
+let energyBaseAt = Date.now();
+let localTapOffset = 0;
+
+function currentEnergy() {
+  const elapsed = Math.max(0, Date.now() - energyBaseAt);
+  const regen = Math.floor(elapsed / 3000);
+
+  return Math.max(
+    0,
+    Math.min(maxEnergy, energyBase + regen) - localTapOffset
+  );
+}
+
+function refreshEnergyDisplay() {
+  if (!isReady) return;
+
+  energy = currentEnergy();
+  render();
+}
+
+setInterval(refreshEnergyDisplay, 1000);
 let player = null;
 let busy = false;
 let pendingTaps = 0;
