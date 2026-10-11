@@ -88,12 +88,20 @@ const SUPABASE_KEY = "sb_publishable_x7a_qp-lzeHsisq8XDv08g_Kunzq169";
 const MAX_ENERGY_DEFAULT = 1000;
 const $ = id => document.getElementById(id);
 
+
 let points = 0;
 let energy = 0;
 let maxEnergy = MAX_ENERGY_DEFAULT;
- let energyBase = 0;
+
+let energyBase = 0;
 let energyBaseAt = Date.now();
 let localTapOffset = 0;
+
+let player = null;
+let busy = false;
+let pendingTaps = 0;
+let tapTimer = null;
+let isReady = false;
 
 function currentEnergy() {
   const elapsed = Math.max(0, Date.now() - energyBaseAt);
@@ -113,34 +121,8 @@ function refreshEnergyDisplay() {
 }
 
 setInterval(refreshEnergyDisplay, 1000);
-let player = null;
-let busy = false;
-let pendingTaps = 0;
-let tapTimer = null;
-let isReady = false;
 
-const initData = tg?.initData || "";
-
-function message(text) {
-  $("message").textContent = text;
-}
-function currentEnergy() {
-  const elapsed = Math.max(0, Date.now() - energyBaseAt);
-  const regen = Math.floor(elapsed / 3000);
-
-  return Math.max(
-    0,
-    Math.min(maxEnergy, energyBase + regen) - localTapOffset
-  );
-}
-function render() {function refreshEnergyDisplay() {
-  if (!isReady) return;
-
-  energy = currentEnergy();
-  render();
-}
-
-setInterval(refreshEnergyDisplay, 1000);
+function render() {
   $("points").textContent = Number(points).toLocaleString();
   $("energy").textContent = Math.max(0, Math.floor(energy));
   $("maxEnergy").textContent = maxEnergy;
