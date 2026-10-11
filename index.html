@@ -103,7 +103,14 @@ function message(text) {
   $("message").textContent = text;
 }
 
-function render() {
+function render() {function refreshEnergyDisplay() {
+  if (!isReady) return;
+
+  energy = currentEnergy();
+  render();
+}
+
+setInterval(refreshEnergyDisplay, 1000);
   $("points").textContent = Number(points).toLocaleString();
   $("energy").textContent = Math.max(0, Math.floor(energy));
   $("maxEnergy").textContent = maxEnergy;
