@@ -404,10 +404,14 @@ async function startApp() {
     $("content").innerHTML =
       "<h3>Welcome to Dropverse Point!</h3><p class='small'>Your account is connected to the server.</p>";
   } catch (error) {
-    isReady = false;
-    render();
-    message("⚠️ " + error.message);
-  }
+  isReady = false;
+  render();
+  console.error("Dropverse startup error:", error);
+  message(
+    "⚠️ " + (error?.message || String(error))
+  );
+}
+
 }
 
 startApp();
