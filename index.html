@@ -202,6 +202,7 @@ async function api(action, extra = {}) {
 async function loadProfile(showMessage = false) {
   const result = await api("profile");
   const p = findPlayerObject(result);
+ console.log("Energy profile:", p);
 
   if (!p) {
     throw new Error("Profile data was not found in the API response.");
@@ -213,7 +214,7 @@ async function loadProfile(showMessage = false) {
 
   energyBase = Math.max(0, Number(p.energy) || 0);
 
-  const lastUpdate = Date.parse(p.last_energy_update);
+  const lastUpdate = Date.parse(p.last_energy_update ||"");
   energyBaseAt = Number.isFinite(lastUpdate)
     ? lastUpdate
     : Date.now();
