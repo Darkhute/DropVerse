@@ -260,20 +260,33 @@ $("coin").addEventListener("click", () => {
   }
 });
 
+```javascript
 async function claimDaily() {
   try {
+    // Show loading message
     message("Claiming your daily reward...");
+
+    // Request reward from Supabase
     const result = await api("daily-reward");
+
+    // Update points and player information
     await loadProfile();
 
-    message(
-      result.message ||
-      "🎉 Daily reward request completed. Your balance is updated."
-    );
+    // Show the correct result
+    if (result.success === true) {
+      message("🎉 +" + result.reward + " DVP Claimed!");
+    } else {
+      message(
+        result.message ||
+        "⚠️ Daily reward already claimed today."
+      );
+    }
+
   } catch (error) {
     message("⚠️ " + error.message);
   }
 }
+```
 
 async function showLeaderboard(content) {
   content.innerHTML =
