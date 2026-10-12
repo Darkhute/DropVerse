@@ -332,30 +332,54 @@ function showPage(page) {
     content.innerHTML =
       "<h3>🏠 Home</h3><p class='small'>Tap the coin and collect  points!</p>";
 } else if (page === "tasks") {
-  content.innerHTML = `
-     <h3>📋 Tasks</h3>
+  content.replaceChildren();
 
-    <div class="task-card">
-      <h4>📢 Join Our Telegram Channel</h4>
-      <p class="small">Reward: 50 DVP</p>
-      <button onclick="completeTask('telegram')">
-        Claim Reward
-      </button>
-    </div>
+  const title = document.createElement("h3");
+  title.textContent = "📋 Tasks";
+  content.appendChild(title);
 
-    <div class="task-card">
-      <h4>👥 Invite a Friend</h4>
-      <p class="small">Reward: 100 DVP</p>
-      <button onclick="completeTask('referral')">
-        Claim Reward
-      </button>
-    </div>
+  const tasks = [
+    {
+      title: "📢 Join Our Telegram Channel",
+      reward: "Reward: 50 DVP",
+      type: "telegram"
+    },
+    {
+      title: "👥 Invite a Friend",
+      reward: "Reward: 100 DVP",
+      type: "referral"
+    }
+  ];
 
-    <p class="small">
-      Complete tasks to earn DVP points!
-    </p>
-  `;
-} else if (page === "daily") {
+  tasks.forEach(function (task) {
+    const card = document.createElement("div");
+    card.className = "task-card";
+
+    const heading = document.createElement("h4");
+    heading.textContent = task.title;
+
+    const reward = document.createElement("p");
+    reward.className = "small";
+    reward.textContent = task.reward;
+
+    const button = document.createElement("button");
+    button.textContent = "Claim Reward";
+    button.onclick = function () {
+      completeTask(task.type);
+    };
+
+    card.appendChild(heading);
+    card.appendChild(reward);
+    card.appendChild(button);
+    content.appendChild(card);
+  });
+
+  const note = document.createElement("p");
+  note.className = "small";
+  note.textContent = "Complete tasks to earn DVP points!";
+  content.appendChild(note); 
+  
+ } else if (page === "daily") {
     content.innerHTML =
       "<h3>🎁 Daily Reward</h3><p class='small'>Claim your daily reward from the server.</p>";
 
