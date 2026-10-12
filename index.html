@@ -311,7 +311,7 @@ async function showLeaderboard(content) {
       const name = row.username || "Player";
       const score = Number(row.points) || 0;
       item.textContent =
-        `${index + 1}. ${name} — ${score.toLocaleString()} DVP`;
+        `{index + 1}. ${name} — ${score.toLocaleString()} DVP`;
       content.appendChild(item);
     });
   } catch (error) {
