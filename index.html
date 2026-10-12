@@ -315,7 +315,7 @@ async function showLeaderboard(content) {
   score.toLocaleString() + " DVP";
       content.appendChild(item);
     });
-  } catch (error) {
+   catch (error) {
     content.innerHTML = "<h3>🏆 Leaderboard</h3>";
     const p = document.createElement("p");
     p.className = "small";
