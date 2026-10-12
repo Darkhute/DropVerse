@@ -325,91 +325,77 @@ async function showLeaderboard(content) {
 }
 
 function showPage(page) {
+
+function showPage(page) {
   const content = $("content");
   content.replaceChildren();
 
   if (page === "home") {
     content.innerHTML =
-      "<h3>🏠 Home</h3><p class='small'>Tap the coin and collect  points!</p>";
-} else if (page === "tasks") {
-  content.replaceChildren();
+      "<h3>🏠 Home</h3><p class='small'>Tap the coin and collect points!</p>";
 
-  const title = document.createElement("h3");
-  title.textContent = "📋 Tasks";
-  content.appendChild(title);
+  } else if (page === "tasks") {
+    const title = document.createElement("h3");
+    title.textContent = "📋 Tasks";
+    content.appendChild(title);
 
-  const tasks = [
-    {
-      title: "📢 Join Our Telegram Channel",
-      reward: "Reward: 50 DVP",
-      type: "telegram"
-    },
-    {
-      title: "👥 Invite a Friend",
-      reward: "Reward: 100 DVP",
-      type: "referral"
-    }
-  ];
+    const tasks = [
+      {
+        title: "📢 Join Our Telegram Channel",
+        reward: "Reward: 50 DVP",
+        type: "telegram"
+      },
+      {
+        title: "👥 Invite a Friend",
+        reward: "Reward: 100 DVP",
+        type: "referral"
+      }
+    ];
 
-  tasks.forEach(function (task) {
-    const card = document.createElement("div");
-    card.className = "task-card";
+    tasks.forEach(function (task) {
+      const card = document.createElement("div");
+      card.className = "task-card";
 
-    const heading = document.createElement("h4");
-    heading.textContent = task.title;
+      const heading = document.createElement("h4");
+      heading.textContent = task.title;
 
-    const reward = document.createElement("p");
-    reward.className = "small";
-    reward.textContent = task.reward;
+      const reward = document.createElement("p");
+      reward.className = "small";
+      reward.textContent = task.reward;
 
-    const button = document.createElement("button");
-    button.textContent = "Claim Reward";
-    button.onclick = function () {
-      completeTask(task.type);
-    };
+      const button = document.createElement("button");
+      button.textContent = "Claim Reward";
+      button.onclick = function () {
+        completeTask(task.type);
+      };
 
-    card.appendChild(heading);
-    card.appendChild(reward);
-    card.appendChild(button);
-    content.appendChild(card);
-  });
+      card.appendChild(heading);
+      card.appendChild(reward);
+      card.appendChild(button);
+      content.appendChild(card);
+    });
 
-  const note = document.createElement("p");
-  note.className = "small";
-  note.textContent = "Complete tasks to earn DVP points!";
-  content.appendChild(note); 
-  
- } else if (page === "daily") {
+    const note = document.createElement("p");
+    note.className = "small";
+    note.textContent = "Complete tasks to earn DVP points!";
+    content.appendChild(note);
+
+  } else if (page === "daily") {
     content.innerHTML =
-      "<h3>🎁 Daily Reward</h3><p class='small'>Claim your daily reward from the server.</p>";
+      "<h3>🎁 Daily Reward</h3>" +
+      "<p class='small'>Claim your daily DVP reward.</p>" +
+      "<button onclick='claimDaily()'>Claim Daily Reward</button>";
 
-    const button = document.createElement("button");
-    button.className = "tile";
-    button.textContent = "Claim Reward";
-    button.onclick = claimDaily;
-    content.appendChild(button);
   } else if (page === "friends") {
     content.innerHTML =
-      "<h3>👥 Invite Friends</h3><p class='small'>Referral rewards need a referral system and your bot's username.</p>";
-  } else if (page === "rank") {
-    showLeaderboard(content);
-  } else if (page === "profile") {
-    const heading = document.createElement("h3");
-    heading.textContent = "👤 Profile";
-    const name = document.createElement("p");
-    name.className = "small";
-    name.textContent =
-      "Name: " + (player?.username ||
-        tg?.initDataUnsafe?.user?.first_name || "Player");
-    const score = document.createElement("p");
-    score.className = "small";
-    score.textContent = "Points: " + points.toLocaleString();
-    content.append(heading, name, score);
+      "<h3>👥 Friends</h3>" +
+      "<p class='small'>Invite friends and grow Dropverse Point!</p>";
+
+  } else if (page === "leaderboard") {
+    loadLeaderboard();
   }
-
-  message("");
 }
-
+   
 document.querySelectorAll("[data-page]").forEach(button => {
   button.addEventListener("click", () => showPage(button.dataset.page));
 });
