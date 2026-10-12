@@ -332,9 +332,30 @@ function showPage(page) {
     content.innerHTML =
       "<h3>🏠 Home</h3><p class='small'>Tap the coin and collect  points!</p>";
   } else if (page === "tasks") {
-    content.innerHTML =
-      "<h3>📋 Tasks</h3><p class='small'>Tasks are not connected to the backend yet.</p>";
-  } else if (page === "daily") {
+  content.innerHTML = `
+    <h3>📋 Tasks</h3>
+
+    <div class="task-card">
+      <h4>📢 Join Our Telegram Channel</h4>
+      <p class="small">Reward: 50 DVP</p>
+      <button onclick="completeTask('telegram')">
+        Claim Reward
+      </button>
+    </div>
+
+    <div class="task-card">
+      <h4>👥 Invite a Friend</h4>
+      <p class="small">Reward: 100 DVP</p>
+      <button onclick="completeTask('referral')">
+        Claim Reward
+      </button>
+    </div>
+
+    <p class="small">
+      Complete tasks to earn DVP points!
+    </p>
+  `;
+} else if (page === "daily") {
     content.innerHTML =
       "<h3>🎁 Daily Reward</h3><p class='small'>Claim your daily reward from the server.</p>";
 
