@@ -260,6 +260,7 @@ $("coin").addEventListener("click", () => {
   }
 });
 
+```javascript
 async function claimDaily() {
   try {
     // Show loading message
@@ -287,37 +288,35 @@ async function claimDaily() {
 }
 ```
 
-
 async function showLeaderboard(content) {
   content.innerHTML =
     "<h3>🏆 Leaderboard</h3><p class='small'>Loading rankings...</p>";
 
   try {
     const result = await api("leaderboard");
-    const rows = result.leaderboard || [];
+    const rows = Array.isArray(result)
+      ? result
+      : (result.leaderboard || result.players || result.data || []);
 
-    content.innerHTML = "<h3>🏆 Leaderboard</h3>";
-
-    if (rows.length === 0) {
-      content.innerHTML +=
-        "<p class='small'>No rankings available yet.</p>";
+    if (!Array.isArray(rows) || rows.length === 0) {
+      content.innerHTML =
+        "<h3>🏆 Leaderboard</h3><p class='small'>No rankings available yet.</p>";
       return;
     }
 
-    rows.forEach((row, index) => {
+    content.innerHTML = "<h3>🏆 Leaderboard</h3>";
+
+    rows.slice(0, 50).forEach((row, index) => {
       const item = document.createElement("p");
       item.className = "small";
-
+      const name = row.username || "Player";
+      const score = Number(row.points) || 0;
       item.textContent =
-        (index + 1) + ". " +
-        (row.username || "Player") + " — " +
-        (Number(row.points) || 0).toLocaleString() + " DVP";
-
+        `${index + 1}. ${name} — ${score.toLocaleString()} DVP`;
       content.appendChild(item);
     });
   } catch (error) {
     content.innerHTML = "<h3>🏆 Leaderboard</h3>";
-
     const p = document.createElement("p");
     p.className = "small";
     p.textContent = "Could not load rankings: " + error.message;
@@ -331,70 +330,41 @@ function showPage(page) {
 
   if (page === "home") {
     content.innerHTML =
-      "<h3>🏠 Home</h3><p class='small'>Tap the coin and collect points!</p>";
-
+      "<h3>🏠 Home</h3><p class='small'>Tap the coin and collect  points!</p>";
   } else if (page === "tasks") {
-    const title = document.createElement("h3");
-    title.textContent = "📋 Tasks";
-    content.appendChild(title);
-
-    const tasks = [
-      {
-        title: "📢 Join Our Telegram Channel",
-        reward: "Reward: 50 DVP",
-        type: "telegram"
-      },
-      {
-        title: "👥 Invite a Friend",
-        reward: "Reward: 100 DVP",
-        type: "referral"
-      }
-    ];
-
-    tasks.forEach(function (task) {
-      const card = document.createElement("div");
-      card.className = "task-card";
-
-      const heading = document.createElement("h4");
-      heading.textContent = task.title;
-
-      const reward = document.createElement("p");
-      reward.className = "small";
-      reward.textContent = task.reward;
-
-      const button = document.createElement("button");
-      button.textContent = "Claim Reward";
-      button.onclick = function () {
-        completeTask(task.type);
-      };
-
-      card.appendChild(heading);
-      card.appendChild(reward);
-      card.appendChild(button);
-      content.appendChild(card);
-    });
-
-    const note = document.createElement("p");
-    note.className = "small";
-    note.textContent = "Complete tasks to earn DVP points!";
-    content.appendChild(note);
-
+    content.innerHTML =
+      "<h3>📋 Tasks</h3><p class='small'>Tasks are not connected to the backend yet.</p>";
   } else if (page === "daily") {
     content.innerHTML =
-      "<h3>🎁 Daily Reward</h3>" +
-      "<p class='small'>Claim your daily DVP reward.</p>" +
-      "<button onclick='claimDaily()'>Claim Daily Reward</button>";
+      "<h3>🎁 Daily Reward</h3><p class='small'>Claim your daily reward from the server.</p>";
 
+    const button = document.createElement("button");
+    button.className = "tile";
+    button.textContent = "Claim Reward";
+    button.onclick = claimDaily;
+    content.appendChild(button);
   } else if (page === "friends") {
     content.innerHTML =
-      "<h3>👥 Friends</h3>" +
-      "<p class='small'>Invite friends and grow Dropverse Point!</p>";
-
-  } else if (page === "leaderboard") {
-    showLeaderboard();
+      "<h3>👥 Invite Friends</h3><p class='small'>Referral rewards need a referral system and your bot's username.</p>";
+  } else if (page === "rank") {
+    showLeaderboard(content);
+  } else if (page === "profile") {
+    const heading = document.createElement("h3");
+    heading.textContent = "👤 Profile";
+    const name = document.createElement("p");
+    name.className = "small";
+    name.textContent =
+      "Name: " + (player?.username ||
+        tg?.initDataUnsafe?.user?.first_name || "Player");
+    const score = document.createElement("p");
+    score.className = "small";
+    score.textContent = "Points: " + points.toLocaleString();
+    content.append(heading, name, score);
   }
+
+  message("");
 }
-   
+
 document.querySelectorAll("[data-page]").forEach(button => {
   button.addEventListener("click", () => showPage(button.dataset.page));
 });
