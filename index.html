@@ -287,36 +287,37 @@ async function claimDaily() {
 }
 ```
 
+
 async function showLeaderboard(content) {
   content.innerHTML =
     "<h3>🏆 Leaderboard</h3><p class='small'>Loading rankings...</p>";
 
   try {
     const result = await api("leaderboard");
-    const rows = Array.isArray(result)
-      ? result
-      : (result.leaderboard || result.players || result.data || []);
+    const rows = result.leaderboard || [];
 
-    if (!Array.isArray(rows) || rows.length === 0) {
-      content.innerHTML =
-        "<h3>🏆 Leaderboard</h3><p class='small'>No rankings available yet.</p>";
+    content.innerHTML = "<h3>🏆 Leaderboard</h3>";
+
+    if (rows.length === 0) {
+      content.innerHTML +=
+        "<p class='small'>No rankings available yet.</p>";
       return;
     }
 
-    content.innerHTML = "<h3>🏆 Leaderboard</h3>";
-
-    rows.slice(0, 50).forEach((row, index) => {
+    rows.forEach((row, index) => {
       const item = document.createElement("p");
       item.className = "small";
-      const name = row.username || "Player";
-      const score = Number(row.points) || 0;
+
       item.textContent =
-  String(index + 1) + ". " + name + " — " +
-  score.toLocaleString() + " DVP";
+        (index + 1) + ". " +
+        (row.username || "Player") + " — " +
+        (Number(row.points) || 0).toLocaleString() + " DVP";
+
       content.appendChild(item);
     });
-   catch (error) {
+  } catch (error) {
     content.innerHTML = "<h3>🏆 Leaderboard</h3>";
+
     const p = document.createElement("p");
     p.className = "small";
     p.textContent = "Could not load rankings: " + error.message;
@@ -390,7 +391,7 @@ function showPage(page) {
       "<p class='small'>Invite friends and grow Dropverse Point!</p>";
 
   } else if (page === "leaderboard") {
-    loadLeaderboard();
+    showLeaderboard();
   }
 }
    
