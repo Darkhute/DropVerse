@@ -361,7 +361,7 @@ async function loadTasks(content) {
       return;
     }
 
-    tasks.forEach(task => {
+    for (const task of tasks {
       const card = document.createElement("article");
       card.className = "task-item";
 
@@ -433,7 +433,7 @@ async function loadTasks(content) {
       actions.append(join, claim);
       card.append(title, description, reward, actions);
       content.appendChild(card);
-    });
+    }
   } catch (error) {
     loading.textContent = "Could not load tasks: " + error.message;
   }
