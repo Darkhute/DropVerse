@@ -321,18 +321,55 @@ async function renderTasks(content) {
       join.onclick = () => { if (task.target_url) window.open(task.target_url, "_blank"); else message("Task link is not configured."); };
       const claim = document.createElement("button"); claim.textContent = "Verify & Claim"; claim.style.cssText = "padding:10px;border:1px solid #8b5cf6;border-radius:9px;background:#302052;color:white;margin:4px;cursor:pointer";
       claim.onclick = async () => {
-        if (!initData) { message("Open this Mini App inside Telegram first."); return; }
-        claim.disabled = true; claim.textContent = "Checking...";
+        if (!initData) {
+          message("⚠️ Open this Mini App from Telegram first.");
+          return;
+        }
+
+        claim.disabled = true;
+        claim.textContent = "Checking...";
+        message("Checking your @dropversecommunity membership...");
+
         try {
-          const r = await fetch("https://uotdwlkodcmwpsbuimfb.supabase.co/functions/v1/dvp-claim-task", {
-            method: "POST", headers: { "Content-Type": "application/json", "apikey": SUPABASE_KEY },
-            body: JSON.stringify({ initData, taskId: task.id })
-          });
-          const data = await r.json();
-          if (!r.ok || data.error || data.success === false) throw new Error(data.error || data.message || "Task verification failed");
-          await loadProfile(); message(data.message || ("Task reward claimed: " + (data.reward || task.reward) + " DVP"));
+          const response = await fetch(
+            "https://uotdwlkodcmwpsbuimfb.supabase.co/functions/v1/dvp-claim-task",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_KEY
+              },
+              body: JSON.stringify({
+                initData: initData,
+                taskId: Number(task.id)
+              })
+            }
+          );
+
+          const responseText = await response.text();
+          let data = {};
+          try {
+            data = responseText ? JSON.parse(responseText) : {};
+          } catch {
+            throw new Error("Server returned an unreadable response (HTTP " + response.status + ").");
+          }
+
+          if (!response.ok || data.error || data.success === false) {
+            throw new Error(
+              data.message || data.error ||
+              ("Claim failed (HTTP " + response.status + "). Check Supabase Function Logs.")
+            );
+          }
+
+          await loadProfile();
+          message(data.message || ("Reward claimed: " + (data.reward || task.reward) + " DVP"));
           claim.textContent = "Claimed";
-        } catch (e) { message("⚠️ " + e.message); claim.disabled = false; claim.textContent = "Verify & Claim"; }
+        } catch (error) {
+          console.error("Community task claim failed:", error);
+          message("⚠️ " + (error?.message || "Claim failed. Check Supabase Function Logs."));
+          claim.disabled = false;
+          claim.textContent = "Verify & Claim";
+        }
       };
       card.append(heading, desc, join, claim); content.appendChild(card);
     }
