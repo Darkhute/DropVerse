@@ -440,12 +440,32 @@ function showPage(page) {
         message("⚠️ Ad SDK is not ready. Please try again later.");
         return;
       }
+
+      adButton.disabled = true;
+      const originalText = adButton.textContent;
+
       try {
         message("Loading ad...");
-        await window.show_12022818();
-        message("Ad flow finished. Ad reward is not credited until Monetag postback verification is configured.");
+        const ymid = crypto.randomUUID();
+
+        // This identifier is useful only if the SDK supports these options
+        // and the backend creates/matches a server-side ad session for it.
+        const result = await window.show_12022818({
+          ymid,
+          requestVar: "daily_reward_ad"
+        });
+
+        if (result?.reward_event_type === "valued") {
+          message("Ad event reported as valued. Waiting for server verification; no points have been credited.");
+        } else {
+          message("Ad event was not confirmed as valued. No points have been credited.");
+        }
       } catch (e) {
-        message("Ad was not completed. Please try again.");
+        console.error("Monetag ad flow error:", e);
+        message("Ad result could not be verified. No points have been credited.");
+      } finally {
+        adButton.disabled = false;
+        adButton.textContent = originalText;
       }
     };
     content.appendChild(adButton);
