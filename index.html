@@ -84,6 +84,7 @@ tg?.ready();
 tg?.expand();
 
 const API_URL = "https://uotdwlkodcmwpsbuimfb.supabase.co/functions/v1/dropverse-game";
+const AD_SESSION_URL = "https://uotdwlkodcmwpsbuimfb.supabase.co/functions/v1/dvp-create-ad-session";
 const SUPABASE_KEY = "sb_publishable_x7a_qp-lzeHsisq8XDv08g_Kunzq169";
 
 const MAX_ENERGY_DEFAULT = 1000;
@@ -196,6 +197,35 @@ async function api(action, extra = {}) {
   }
 
   return result;
+}
+
+async function createAdSession(ymid) {
+  if (!initData) {
+    throw new Error("Open this Mini App from Telegram first.");
+  }
+
+  const response = await fetch(AD_SESSION_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_KEY
+    },
+    body: JSON.stringify({ initData, ymid, taskId: 2 })
+  });
+
+  const text = await response.text();
+  let data;
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error("Ad session server returned an unreadable response.");
+  }
+
+  if (!response.ok || data.success === false || data.error) {
+    throw new Error(data.message || data.error || `Could not create ad session (${response.status}).`);
+  }
+
+  return data;
 }
 
 async function loadProfile(showMessage = false) {
@@ -445,24 +475,27 @@ function showPage(page) {
       const originalText = adButton.textContent;
 
       try {
-        message("Loading ad...");
+        message("Preparing secure ad session...");
         const ymid = crypto.randomUUID();
 
-        // This identifier is useful only if the SDK supports these options
-        // and the backend creates/matches a server-side ad session for it.
+        // Create the server-side session before opening the ad.
+        // The server derives Telegram ID from verified Telegram initData.
+        await createAdSession(ymid);
+
+        message("Ad session created. Loading ad...");
         const result = await window.show_12022818({
           ymid,
           requestVar: "daily_reward_ad"
         });
 
         if (result?.reward_event_type === "valued") {
-          message("Ad event reported as valued. Waiting for server verification; no points have been credited.");
+          message("Ad flow finished. Waiting for verified Monetag postback before crediting DVP.");
         } else {
-          message("Ad event was not confirmed as valued. No points have been credited.");
+          message("Ad opened. Waiting for Monetag server verification; no points have been credited yet.");
         }
       } catch (e) {
         console.error("Monetag ad flow error:", e);
-        message("Ad result could not be verified. No points have been credited.");
+        message("⚠️ " + (e?.message || "Ad session or ad flow failed."));
       } finally {
         adButton.disabled = false;
         adButton.textContent = originalText;
@@ -471,7 +504,7 @@ function showPage(page) {
     content.appendChild(adButton);
     const note = document.createElement("p");
     note.className = "small";
-    note.textContent = "Ad reward is not automatically added yet; verified Monetag postback is required.";
+    note.textContent = "Each eligible ad can earn 5 DVP after the server verifies the Monetag postback.";
     content.appendChild(note);
   } else if (page === "friends") {
     content.innerHTML =
