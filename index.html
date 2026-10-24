@@ -453,7 +453,12 @@ function showPage(page) {
     renderTasks(content);
   } else if (page === "daily") {
     content.innerHTML =
-      "<h3>🎁 Daily Reward</h3><p class='small'>Claim your daily reward from the server.</p>";
+      "<h3>🎁 Daily Reward</h3><p class='small'>Claim your daily reward from the server.</p>" +
+      "<div style='margin:14px 0;padding:16px;border:1px solid #574481;border-radius:14px;background:linear-gradient(135deg,#211638,#302052)'>" +
+      "<h3 style='margin:0 0 8px;color:#c4b5fd'>🎬 Watch Ads &amp; Earn</h3>" +
+      "<div style='font-size:26px;font-weight:bold;color:#86efac;margin:6px 0'>+5 DVP</div>" +
+      "<p class='small' style='margin:8px 0 0'>Watch a rewarded ad completely to earn 5 DVP. Your reward is added after Monetag server verification.</p>" +
+      "</div>";
 
     const button = document.createElement("button");
     button.className = "tile";
@@ -463,7 +468,7 @@ function showPage(page) {
     content.appendChild(button);
 
     const adButton = document.createElement("button");
-    adButton.textContent = "▶ Watch Ad";
+    adButton.textContent = "▶ Watch Ad & Earn 5 DVP";
     adButton.style.cssText = "width:100%;margin:8px 0;padding:13px;border-radius:12px;border:1px solid #574481;background:#211638;color:white;cursor:pointer";
     adButton.onclick = async () => {
       if (typeof window.show_12022818 !== "function") {
